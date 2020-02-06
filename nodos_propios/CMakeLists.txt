@@ -5,6 +5,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   geometry_msgs
+  sensor_msgs
   roslint
 )
 
@@ -19,13 +20,16 @@ include_directories(
 add_executable(nodo_forward_para src/nodo_forward_para.cpp)
 add_executable(nodo_forward_rotaciones src/nodo_forward_rotaciones.cpp)
 add_executable(nodo_forward_depende src/nodo_forward_depende.cpp)
+add_executable(nodo_laser src/nodo_laser.cpp)
 
 target_link_libraries(nodo_forward_para ${catkin_LIBRARIES})
 target_link_libraries(nodo_forward_rotaciones ${catkin_LIBRARIES})
 target_link_libraries(nodo_forward_depende ${catkin_LIBRARIES})
+target_link_libraries(nodo_laser ${catkin_LIBRARIES})
 
 roslint_cpp(
   src/nodo_forward_para.cpp
   src/nodo_forward_rotaciones.cpp
   src/nodo_forward_depende.cpp
+  src/nodo_laser.cpp
 )
