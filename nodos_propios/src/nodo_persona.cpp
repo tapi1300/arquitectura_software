@@ -26,7 +26,7 @@ int laser=0;
 void choque(const sensor_msgs::LaserScan msg)
 {
   std::vector<float> ranges = msg.ranges;
-  if(laser.ranges[ranges.size()/2]<1)
+  if(msg.ranges[ranges.size()/2]<1)
   {
     laser=1;
     ros::NodeHandle n;
@@ -53,17 +53,17 @@ void persona_detectada(const darknet_ros_msgs::BoundingBoxes msg)
   ros::NodeHandle n;
 
   geometry_msgs::Twist giro;
-  if(laser == 0 && msg.Class == "person" && msg.bounding_boxes.probability>0.70 && msg.bounding_boxes.xmax-msg.bounding_boxes.xmin > width/2-20 && msg.bounding_boxes.xmax-msg.bounding_boxes.xmin < width/2+20)
+  if(laser == 0 && msg.bounding_boxes[0].Class == "person" && msg.bounding_boxes[0].probability>0.70 && msg.bounding_boxes[0].xmax-msg.bounding_boxes[0].xmin > width/2-20 && msg.bounding_boxes[0].xmax-msg.bounding_boxes[0].xmin < width/2+20)
   {
     giro.linear.x = 0.2;
     giro.angular.z = 0.0;
   }
-  else if(laser == 0 && msg.Class == "person" && msg.bounding_boxes.probability>0.70 && msg.bounding_boxes.xmax-msg.bounding_boxes.xmin < width/2-20)
+  else if(laser == 0 && msg.bounding_boxes[0].Class == "person" && msg.bounding_boxes[0].probability>0.70 && msg.bounding_boxes[0].xmax-msg.bounding_boxes[0].xmin < width/2-20)
   {
       giro.linear.x = 0.0;
       giro.angular.z = 0.3;
   }
-  else if(laser == 0 && msg.Class == "person" && msg.bounding_boxes.probability>0.70 && msg.bounding_boxes.xmax-msg.bounding_boxes.xmin > width/2+20)
+  else if(laser == 0 && msg.bounding_boxes[0].Class == "person" && msg.bounding_boxes[0].probability>0.70 && msg.bounding_boxes[0].xmax-msg.bounding_boxes[0].xmin > width/2+20)
   {
       giro.linear.x = 0.0;
       giro.angular.z = -0.3;
@@ -80,7 +80,7 @@ void persona_detectada(const darknet_ros_msgs::BoundingBoxes msg)
   loop_rate.sleep();
 
 
-  num_pub.publish(movimiento);
+  num_pub.publish(giro);
   ros::spinOnce();
   loop_rate.sleep();
 }
