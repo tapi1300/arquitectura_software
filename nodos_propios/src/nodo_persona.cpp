@@ -14,23 +14,64 @@
 
 #include "ros/ros.h"
 #include "darknet_ros_msgs/BoundingBoxes.h"
-#include "darknet_ros_msgs/BoundingBox.h"
+#include "sensor_msgs/LaserScan.h"
 #include "geometry_msgs/Twist.h"
 
 
-int ha_retrocedido=0;
+int width = 640;
+int heigth = 480;
+int laser=0;
 
+
+void choque(const sensor_msgs::LaserScan msg)
+{
+  std::vector<float> ranges = msg.ranges;
+  if(laser.ranges[ranges.size()/2]<1)
+  {
+    laser=1;
+    ros::NodeHandle n;
+    geometry_msgs::Twist giro;
+    ros::Publisher num_pub = n.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
+    ros::Rate loop_rate(10);
+
+    loop_rate.sleep();
+    giro.linear.x = 0.0;
+    giro.angular.z = 0.0;
+
+    num_pub.publish(giro);
+    ros::spinOnce();
+    loop_rate.sleep();
+  }
+  else
+  {
+    laser=0;
+  }
+}
 
 void persona_detectada(const darknet_ros_msgs::BoundingBoxes msg)
 {
   ros::NodeHandle n;
 
   geometry_msgs::Twist giro;
+  if(laser == 0 && msg.Class == "person" && msg.bounding_boxes.probability>0.70 && msg.bounding_boxes.xmax-msg.bounding_boxes.xmin > width/2-20 && msg.bounding_boxes.xmax-msg.bounding_boxes.xmin < width/2+20)
+  {
+    giro.linear.x = 0.2;
+    giro.angular.z = 0.0;
+  }
+  else if(laser == 0 && msg.Class == "person" && msg.bounding_boxes.probability>0.70 && msg.bounding_boxes.xmax-msg.bounding_boxes.xmin < width/2-20)
+  {
+      giro.linear.x = 0.0;
+      giro.angular.z = 0.3;
+  }
+  else if(laser == 0 && msg.Class == "person" && msg.bounding_boxes.probability>0.70 && msg.bounding_boxes.xmax-msg.bounding_boxes.xmin > width/2+20)
+  {
+      giro.linear.x = 0.0;
+      giro.angular.z = -0.3;
+  }
 
 
 
-// INTRODUCIR PROGRAMA DE DETECCION DE HUMANOS AQUI
-
+  // INTRODUCIR PROGRAMA DE DETECCION DE HUMANOS AQUI
 
 
   ros::Publisher num_pub = n.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
@@ -38,7 +79,8 @@ void persona_detectada(const darknet_ros_msgs::BoundingBoxes msg)
 
   loop_rate.sleep();
 
-  num_pub.publish(giro);
+
+  num_pub.publish(movimiento);
   ros::spinOnce();
   loop_rate.sleep();
 }
@@ -54,7 +96,10 @@ int main(int argc, char **argv)
 
   ros::Publisher num_pub = n.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
 
-  ros::Subscriber sub = n.subscribe("/darknet_ros_msgs/BoundingBoxes", 1, persona_detectada);
+  ros::Subscriber sub1 = n.subscribe("/darknet_ros_msgs/BoundingBoxes", 1, persona_detectada);
+  ros::Subscriber sub2 = n.subscribe("/scan_filtered", 1, choque);
+
+
   ros::Rate loop_rate(1000);
 
   while (ros::ok())
