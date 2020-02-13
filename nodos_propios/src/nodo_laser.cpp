@@ -17,7 +17,7 @@
 #include "geometry_msgs/Twist.h"
 
 
-int ha_retrocedido=0;
+int ha_retrocedido = 0;
 
 
 void choque(const sensor_msgs::LaserScan msg)
@@ -31,12 +31,19 @@ void choque(const sensor_msgs::LaserScan msg)
   ros::Rate loop_rate(10);
 
   loop_rate.sleep();
-
-  if(msg.ranges[ranges.size()/2]<0.50 && ha_retrocedido==0)
+  int retroceder = 0;
+  for(int i = 0; i < 40; i++)
+  {
+    if(msg.ranges[ranges.size() / 2 - 20 + i] < 1)
+    {
+      retroceder = 1;
+    }
+  }
+  if(retroceder == 1 && ha_retrocedido == 0)
   {
     ROS_INFO("AAAAAA");
-    ha_retrocedido=1;;
-    for(int i=0; i<40; i++)
+    ha_retrocedido = 1;
+    for(int i = 0; i < 30; i++)
     {
       if(i<10)
       {
@@ -46,7 +53,7 @@ void choque(const sensor_msgs::LaserScan msg)
       else
       {
         giro.linear.x = 0.0;
-        giro.angular.z = 0.4;
+        giro.angular.z = 0.3;
       }
 
       num_pub.publish(giro);
@@ -54,7 +61,7 @@ void choque(const sensor_msgs::LaserScan msg)
       loop_rate.sleep();
     }
   }
-  if(msg.ranges[ranges.size()/2]>0.50)
+  if(retroceder == 0)
   {
     ha_retrocedido=0;
   }
@@ -70,8 +77,8 @@ int main(int argc, char **argv)
 
   ros::Publisher num_pub = n.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
 
-  ros::Subscriber sub = n.subscribe("/scan_filtered", 1, choque);
-  ros::Rate loop_rate(1000);
+  ros::Subscriber sub = n.subscribe("/scan", 1, choque);
+  ros::Rate loop_rate(10);
 
   while (ros::ok())
   {
