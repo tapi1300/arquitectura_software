@@ -59,26 +59,31 @@ void choque(const sensor_msgs::LaserScan msg)
 void persona_detectada(const darknet_ros_msgs::BoundingBoxes msg)
 {
   ros::NodeHandle n;
-
-  ROS_INFO("aaaa");
-  // AVANZAR
-  if(laser == 0 && msg.bounding_boxes[0].Class == "person" && msg.bounding_boxes[0].probability>0.00 && ((msg.bounding_boxes[0].xmax-msg.bounding_boxes[0].xmin)/2+msg.bounding_boxes[0].xmin) > width/2-20 && ((msg.bounding_boxes[0].xmax-msg.bounding_boxes[0].xmin)/2+msg.bounding_boxes[0].xmin) < width/2+20)
+  int posicion = 0;
+  for(int i = 0; i < sizeof(msg.bounding_boxes)/sizeof(msg.bounding_boxes[0]); i++)
   {
-    ROS_INFO("11111");
+    if(msg.bounding_boxes[i].Class == "person")
+    {
+      posicion = i;
+      break;
+    }
+  }
+
+  // AVANZAR
+  if(laser == 0 && msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2-20 && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2+20)
+  {
     giro.linear.x = 0.2;
     giro.angular.z = 0.0;
   }
   // GIRO IZQ
-  else if(laser == 0 && msg.bounding_boxes[0].Class == "person" && msg.bounding_boxes[0].probability>0.00 && ((msg.bounding_boxes[0].xmax-msg.bounding_boxes[0].xmin)/2+msg.bounding_boxes[0].xmin) < width/2-20)
+  else if(laser == 0 && msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2-20)
   {
-    ROS_INFO("AAAAAA");
       giro.linear.x = 0.0;
       giro.angular.z = 0.01;
   }
   // GIRO DER
-  else if(laser == 0 && msg.bounding_boxes[0].Class == "person" && msg.bounding_boxes[0].probability>0.00 && ((msg.bounding_boxes[0].xmax-msg.bounding_boxes[0].xmin)/2+msg.bounding_boxes[0].xmin) > width/2+20)
+  else if(laser == 0 && msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2+20)
   {
-    ROS_INFO("bbbbb");
       giro.linear.x = 0.0;
       giro.angular.z = -0.01;
   }
@@ -110,10 +115,10 @@ int main(int argc, char **argv)
   ros::Publisher num_pub = n.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
 
   ros::Subscriber sub1 = n.subscribe("/darknet_ros/bounding_boxes", 1, persona_detectada);
-  ros::Subscriber sub2 = n.subscribe("/scan_filtered", 1, choque);
+  ros::Subscriber sub2 = n.subscribe("/scan", 1, choque);
 
 
-  ros::Rate loop_rate(1000);
+  ros::Rate loop_rate(10);
 
   while (ros::ok())
   {
