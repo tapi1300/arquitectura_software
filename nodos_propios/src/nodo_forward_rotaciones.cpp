@@ -28,7 +28,6 @@ void choque(const kobuki_msgs::BumperEvent msg)
 
     ros::Rate loop_rate(10);
 
-    // ROS_INFO("***SA CHOKAO***");
     loop_rate.sleep();
     for(int i=0; i<40; i++)
     {
@@ -56,7 +55,6 @@ void choque(const kobuki_msgs::BumperEvent msg)
       ros::spinOnce();
       loop_rate.sleep();
     }
-    // ROS_INFO("***SEGUIMOS HACIA PALANTE***");
   }
 }
 

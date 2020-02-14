@@ -30,7 +30,7 @@ void choque(const sensor_msgs::LaserScan msg)
   std::vector<float> ranges = msg.ranges;
   for(int i=0; i<40; i++)
   {
-    if(msg.ranges[ranges.size()/2-20+i]<1)
+    if(msg.ranges[ranges.size()/2-20+i]<0.5)
     {
       parar = 1;
     }
@@ -79,13 +79,13 @@ void persona_detectada(const darknet_ros_msgs::BoundingBoxes msg)
   else if(laser == 0 && msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2-20)
   {
       giro.linear.x = 0.0;
-      giro.angular.z = 0.01;
+      giro.angular.z = 0.15;
   }
   // GIRO DER
   else if(laser == 0 && msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2+20)
   {
       giro.linear.x = 0.0;
-      giro.angular.z = -0.01;
+      giro.angular.z = -0.15;
   }
 
 
