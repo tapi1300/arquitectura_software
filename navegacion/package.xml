@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>navegacion</name>
+  <name>nodos_propios</name>
   <version>0.1.0</version>
-  <description>The basics_ros package</description>
+  <description>Ros for 2nd robots arch</description>
 
-  <maintainer email="fmrico@gmail.com">fmrico</maintainer>
+  <maintainer email="d.tapiador.2018@alumnos.urjc.es">tapi1300</maintainer>
 
   <license>Apache 2</license>
   <url type="website">https://www.aulavirtual.urjc.es/moodle/course/view.php?id=144699</url>
 
-  <author email="fmrico@gmail.com">Francisco Martín</author>
+  <author email="d.tapiador.2018@alumnos.urjc.es">David Tapiador</author>
 
   <buildtool_depend>catkin</buildtool_depend>
 
