@@ -30,7 +30,7 @@ void choque(const sensor_msgs::LaserScan msg)
   std::vector<float> ranges = msg.ranges;
   for(int i=0; i<40; i++)
   {
-    if(msg.ranges[ranges.size()/2-30+i]<0.5)
+    if(msg.ranges[ranges.size()/2-20+i]<0.5)
     {
       parar = 1;
     }
@@ -40,7 +40,7 @@ void choque(const sensor_msgs::LaserScan msg)
     laser=1;
     ros::NodeHandle n;
     ros::Publisher num_pub = n.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
-    ros::Rate loop_rate(30);
+    ros::Rate loop_rate(10);
 
     loop_rate.sleep();
     giro.linear.x = 0.0;
@@ -94,7 +94,7 @@ void persona_detectada(const darknet_ros_msgs::BoundingBoxes msg)
 
 
   ros::Publisher num_pub = n.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
-  ros::Rate loop_rate(30);
+  ros::Rate loop_rate(10);
 
   loop_rate.sleep();
 
