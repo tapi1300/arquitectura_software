@@ -4,8 +4,8 @@
 bool ha_llegado;
 
 void Callback(geometry_msgs::PoseStamped goal_pose_)
-            /*  TIPO DE MENSAJE DEL TOPIC DE HABER LLEGADO */
-            /*  NO ES EL QUE ESTÁ PUESTO!!!!!! */
+            /*  TIPO DE MENSAJE DEL TOPIC DE HABER LLEGADO
+                NO ES EL QUE ESTÁ PUESTO!!!!!! */
 {
     ha_llegado = true;
 }
@@ -42,7 +42,8 @@ int main(int argc, char **argv)
     pos.pose.position.y;
     pos.pose.position.z;
 
-    geometry_msgs::PoseStamped pos_array[0]=pos;
+    geometry_msgs::PoseStamped pos_array[5];
+    pos_array[0]=pos;
 
 
 

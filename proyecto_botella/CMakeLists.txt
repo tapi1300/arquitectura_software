@@ -23,6 +23,7 @@ include_directories(
 )
 
 
+
 add_executable(navegacion src/navegacion.cpp)
 add_executable(main src/main.cpp)
 
