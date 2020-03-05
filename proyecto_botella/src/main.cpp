@@ -10,13 +10,13 @@ void Callback(geometry_msgs::PoseStamped goal_pose_)
     ha_llegado = true;
 }
 
-void ir_a_pos(geometry_msgs::PoseStamped tf)
+void ir_a_pos(geometry_msgs::PoseStamped pos)
 {
     bool ha_llegado = false;
     ros::NodeHandle n;
 
     ros::Publisher num_pub = n.advertise<geometry_msgs::PoseStamped>("/navigate_to", 1);
-    num_pub.publish(tf);
+    num_pub.publish(pos);
     ros::spinOnce();
 
     ros::Subscriber wp_sub_ = n.subscribe("/" /* /TOPIC EN EL QUE SE PUBLICA QUE HA LLEGADO A LA UBICACION */,
@@ -37,12 +37,12 @@ int main(int argc, char **argv)
 {
     ros::Rate loop_rate(10);
            
-    geometry_msgs::PoseStamped posicion;
-    transformada.pose.position.x;
-    transformada.pose.position.y;
-    transformada.pose.position.z;
+    geometry_msgs::PoseStamped pos;
+    pos.pose.position.x;
+    pos.pose.position.y;
+    pos.pose.position.z;
 
-    geometry_msgs::PoseStamped pos_array[0]=transformada;
+    geometry_msgs::PoseStamped pos_array[0]=pos;
 
 
 
