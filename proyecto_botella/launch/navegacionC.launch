@@ -1,10 +1,12 @@
 <launch>
 
- <arg name="custom_param_file" default="$(find navigation)/param/dummy.yaml"/>
+ <arg name="custom_param_file" default="$(find proyecto_botella)/param/dummy.yaml"/>
   <!-- Map server -->
-  <arg name="map_file" default="$(find proyecto_botella)/maps/map.yaml"/>
+  <arg name="map_file" default="$(find proyecto_botella)/maps/GrannieAnnie.yaml"/>
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
 
+	<node pkg="proyecto_botella" type="navegacion" name="navigador" output="screen"/>
+	<!-- node pkg="proyecto_botella" type="main" name="ubicacionador" output="screen"/-->
   <arg name="initial_pose_x" default="0.0"/>
   <arg name="initial_pose_y" default="0.0"/>
   <arg name="initial_pose_a" default="0.0"/>
