@@ -25,13 +25,10 @@ include_directories(
 
 
 add_executable(navegacion src/navegacion.cpp)
-add_executable(main src/main.cpp)
 
 target_link_libraries(navegacion ${catkin_LIBRARIES})
-target_link_libraries(main ${catkin_LIBRARIES})
 
 roslint_cpp(
   src/navegacion.cpp
-  src/main.cpp
 )
 

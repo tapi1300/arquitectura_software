@@ -1,7 +1,98 @@
 #include "actionlib/client/simple_action_client.h"
 #include "move_base_msgs/MoveBaseAction.h"
 #include "geometry_msgs/PoseStamped.h"
+#include "darknet_ros_msgs/BoundingBoxes.h"
+#include "geometry_msgs/Twist.h"
 #include <string>
+
+
+
+class Objeto_search
+{
+  public:
+    Objeto_search()
+    {
+      object_det=false;
+    }
+
+    void objeto_detectado(const darknet_ros_msgs::BoundingBoxes msg)
+    {
+      num_pub = n.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
+      ros::Rate loop_rate(10);
+
+
+      int posicion = 0;
+      for(int i = 0; i < sizeof(msg.bounding_boxes)/sizeof(msg.bounding_boxes[0]); i++)
+      {
+        if(msg.bounding_boxes[i].Class == "bottle")
+        {
+          posicion = i;
+          break;
+        }
+      }
+      // AVANZAR
+      if(((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2-20 && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2+20)
+      {
+        object_det = true;
+
+        /*  
+            BUSCAR POSICION DE LA BOTELLA 
+            Y PUBLICAR TF DE LA BOTELLA
+        */
+      }
+      // GIRO IZQ
+      else if(((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2-20)
+      {
+          giro.linear.x = 0.0;
+          giro.angular.z = 0.15;
+      }
+      // GIRO DER
+      else if(((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2+20)
+      {
+          giro.linear.x = 0.0;
+          giro.angular.z = -0.15;
+      }
+      //  SI NO CUADRA CON NINGUNA, GIRA DERECHA
+      else
+      {
+        giro.linear.x = 0.0;
+        giro.angular.z = -0.15;
+      }
+
+      
+      loop_rate.sleep();
+
+
+      num_pub.publish(giro);
+      ros::spinOnce();
+      loop_rate.sleep();
+    }
+
+    void buscar_botella()
+    {
+      int contador = 0;
+      int VALOR = 360;
+      sub = n.subscribe("/darknet_ros/bounding_boxes", 1, &Objeto_search::objeto_detectado, this);
+      while(!object_det && contador < VALOR)
+      {
+        contador++;
+        //  HACE TIEMPO XD
+      }
+      return;
+    }
+
+    
+
+  private:
+    ros::NodeHandle n;
+    ros::Publisher num_pub;
+    ros::Subscriber sub;
+    int width = 640;
+    int heigth = 480;
+    geometry_msgs::Twist giro;
+    bool object_det;
+};
+
 
 namespace navigation
 {
@@ -14,7 +105,6 @@ class Navigator
 
     void ir_a_pos()
     {
-      // ROS_INFO("[navigate_to_wp] Commanding to (%f %f)", goal_pose_.pose.position.x, goal_pose_.pose.position.y);
       move_base_msgs::MoveBaseGoal goal;
       goal.target_pose.pose.orientation.x = 0.0;
       goal.target_pose.pose.orientation.y = 0.0;
@@ -83,12 +173,19 @@ class Navigator
 };
 }
 
+
+
+
+
+
+
 int main(int argc, char** argv)
 {
   int posicion_nav = 0;
   ros::init(argc, argv, "navegacion");
   ros::NodeHandle nh("~");
   navigation::Navigator navigator(nh);
+  Objeto_search buscador;
 
   while (ros::ok())
   {
@@ -96,10 +193,10 @@ int main(int argc, char** argv)
     ros::spinOnce();
     navigator.step();
     navigator.ir_a_pos();
-    // if(posicion_nav != navigator.posigetcion)
-    // {
-    //   buscar_botella();
-    // }
+    if(posicion_nav != navigator.get_pos())
+    {
+      buscador.buscar_botella();
+    }
   }
   return 0;
 }
