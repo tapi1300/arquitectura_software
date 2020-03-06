@@ -117,20 +117,20 @@ class Navigator
                 goal.target_pose.pose.position.y = 0.0;
                 break;
 
-        case 1: goal.target_pose.pose.position.x = 4.0;
-                goal.target_pose.pose.position.y = 2.;
-                break;
+        // case 1: goal.target_pose.pose.position.x = 4.0;
+        //         goal.target_pose.pose.position.y = 2.;
+        //         break;
 
-        case 2: goal.target_pose.pose.position.x = 3.0;
-                goal.target_pose.pose.position.y = 0.0;
-                break; 
+        // case 2: goal.target_pose.pose.position.x = 3.0;
+        //         goal.target_pose.pose.position.y = 0.0;
+        //         break; 
         default:
                 goal.target_pose.pose.position.x = -0.1541;
                 goal.target_pose.pose.position.y = -0.1541;
                 break;
                 
       }
-      if (posicion < 4)
+      if (posicion < num_posiciones+1)
       {
         goal.target_pose.header.frame_id = "map";
         goal.target_pose.header.stamp = ros::Time::now();
@@ -140,6 +140,7 @@ class Navigator
     }
 
     int get_pos(){return posicion;}
+    int get_max_pos(){return num_posiciones;}
 
     void step()
     {
@@ -165,6 +166,7 @@ class Navigator
 
   private:
     int posicion = 0;
+    int num_posiciones = 1;
     ros::NodeHandle nh_;
     ros::Subscriber wp_sub_;
     bool goal_sended_;
@@ -185,7 +187,7 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "navegacion");
   ros::NodeHandle nh("~");
   navigation::Navigator navigator(nh);
-  Objeto_search buscador;
+  // Objeto_search buscador;
 
   while (ros::ok())
   {
@@ -193,9 +195,15 @@ int main(int argc, char** argv)
     ros::spinOnce();
     navigator.step();
     navigator.ir_a_pos();
-    if(posicion_nav != navigator.get_pos())
+    if(posicion_nav != navigator.get_pos() && posicion_nav != navigator.get_max_pos())
     {
-      buscador.buscar_botella();
+      ROS_INFO("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+      // buscador.buscar_botella();
+    }
+    else if(posicion_nav == navigator.get_max_pos()+1)
+    {
+      ROS_INFO("Estamos en casita crack");
+      break;
     }
   }
   return 0;
