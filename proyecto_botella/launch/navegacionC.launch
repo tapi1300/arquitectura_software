@@ -5,7 +5,7 @@
   <arg name="map_file" default="$(find proyecto_botella)/maps/GrannieAnnie.yaml"/>
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
 
-	<node pkg="proyecto_botella" type="navegacion" name="navigador" output="screen"/>
+	<node pkg="proyecto_botella" type="navegacion" name="navegacion" output="screen"/>
 	<!-- node pkg="proyecto_botella" type="main" name="ubicacionador" output="screen"/-->
   <arg name="initial_pose_x" default="0.0"/>
   <arg name="initial_pose_y" default="0.0"/>

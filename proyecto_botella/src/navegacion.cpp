@@ -16,39 +16,40 @@ class Navigator
     {
       // ROS_INFO("[navigate_to_wp] Commanding to (%f %f)", goal_pose_.pose.position.x, goal_pose_.pose.position.y);
       move_base_msgs::MoveBaseGoal goal;
-       if(goal_sended_)
+      goal.target_pose.pose.orientation.x = 0.0;
+      goal.target_pose.pose.orientation.y = 0.0;
+      goal.target_pose.pose.orientation.z = 0.0;
+      goal.target_pose.pose.orientation.w = 1.0;
+
+      switch(posicion)
       {
-        goal.target_pose.pose.orientation.x = 0.0;
-        goal.target_pose.pose.orientation.y = 0.0;
-        goal.target_pose.pose.orientation.z = 0.0;
-        goal.target_pose.pose.orientation.w = 1.0;
+        case 0: goal.target_pose.pose.position.x = 3.0;
+                goal.target_pose.pose.position.y = 0.0;
+                break;
 
-        switch(posicion)
-        {
-          case 0: goal.target_pose.pose.position.x = 2.0;
-                  goal.target_pose.pose.position.y = 0.0;
-                  goal.target_pose.pose.position.z = 0.0;
-                  break;
+        case 1: goal.target_pose.pose.position.x = 4.0;
+                goal.target_pose.pose.position.y = 2.;
+                break;
 
-          case 1: goal.target_pose.pose.position.x = 3.0;
-                  goal.target_pose.pose.position.y = 1.0;
-                  break;
-
-          case 2: goal.target_pose.pose.position.x = 3.0;
-                  goal.target_pose.pose.position.y = 0.0;
-                  break;
-          default:
-                  goal.target_pose.pose.position.x = 0.0;
-                  goal.target_pose.pose.position.y = 0.0;
-                  break;
-                  
-        }
+        case 2: goal.target_pose.pose.position.x = 3.0;
+                goal.target_pose.pose.position.y = 0.0;
+                break; 
+        default:
+                goal.target_pose.pose.position.x = -0.1541;
+                goal.target_pose.pose.position.y = -0.1541;
+                break;
+                
+      }
+      if (posicion < 4)
+      {
         goal.target_pose.header.frame_id = "map";
         goal.target_pose.header.stamp = ros::Time::now();
         action_client_.sendGoal(goal);
         goal_sended_ = true;
-       }
+      }
     }
+
+    int get_pos(){return posicion;}
 
     void step()
     {
@@ -62,8 +63,8 @@ class Navigator
           if (state == actionlib::SimpleClientGoalState::SUCCEEDED)
           {
             ROS_INFO("[navigate_to_wp] Goal Reached!");
-            posicion++;
             goal_sended_ = false;
+            posicion++;
           }
           else
             ROS_INFO("[navigate_to_wp] Something bad happened!");
@@ -84,16 +85,21 @@ class Navigator
 
 int main(int argc, char** argv)
 {
-
-  ros::init(argc, argv, "navigate_to_wp_node");
+  int posicion_nav = 0;
+  ros::init(argc, argv, "navegacion");
   ros::NodeHandle nh("~");
   navigation::Navigator navigator(nh);
+
   while (ros::ok())
   {
-    navigator.ir_a_pos();
-    navigator.step();
+    posicion_nav = navigator.get_pos();
     ros::spinOnce();
-  
+    navigator.step();
+    navigator.ir_a_pos();
+    // if(posicion_nav != navigator.posigetcion)
+    // {
+    //   buscar_botella();
+    // }
   }
   return 0;
 }
