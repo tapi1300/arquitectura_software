@@ -77,7 +77,7 @@ class Objeto_search
       int contador = 0;
       int VALOR = 3600;
       sub = n.subscribe("/darknet_ros/bounding_boxes", 1, &Objeto_search::objeto_detectado, this);
-      while(!object_det && (contador < VALOR)
+      while(!object_det && (contador < VALOR))
       {
         contador++;
         ROS_INFO("joder bro 1\n");
@@ -128,7 +128,7 @@ class Navigator
                 break;
 
         case 1: goal.target_pose.pose.position.x = 4.0;
-                goal.target_pose.pose.position.y = 2.;
+                goal.target_pose.pose.position.y = 2.0;
                 break;
 
         case 2: goal.target_pose.pose.position.x = 3.0;
