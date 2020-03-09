@@ -24,33 +24,38 @@ class Objeto_search
       int posicion = 0;
       for(int i = 0; i < sizeof(msg.bounding_boxes)/sizeof(msg.bounding_boxes[0]); i++)
       {
-        if(msg.bounding_boxes[i].Class == "bottle")
+        if(msg.bounding_boxes[i].Class == "person")
         {
           posicion = i;
           break;
         }
       }
-      // AVANZAR
+      // STOP & PUB TF
       if(((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2-20 && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2+20)
       {
-        object_det = true;
+        // object_det = true;
+        giro.linear.x = 0.0;
+        giro.angular.z = 0.0;
 
         /*  
             BUSCAR POSICION DE LA BOTELLA 
             Y PUBLICAR TF DE LA BOTELLA
         */
+        sub.shutdown();
       }
       // GIRO IZQ
       else if(((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2-20)
       {
-          giro.linear.x = 0.0;
-          giro.angular.z = 0.15;
+        // object_det = true;
+        giro.linear.x = 0.0;
+        giro.angular.z = 0.15;
       }
       // GIRO DER
       else if(((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2+20)
       {
-          giro.linear.x = 0.0;
-          giro.angular.z = -0.15;
+        // object_det = true;
+        giro.linear.x = 0.0;
+        giro.angular.z = -0.15;
       }
       //  SI NO CUADRA CON NINGUNA, GIRA DERECHA
       else
@@ -58,7 +63,6 @@ class Objeto_search
         giro.linear.x = 0.0;
         giro.angular.z = -0.15;
       }
-
       
       loop_rate.sleep();
 
@@ -71,12 +75,17 @@ class Objeto_search
     void buscar_botella()
     {
       int contador = 0;
-      int VALOR = 360;
+      int VALOR = 3600;
       sub = n.subscribe("/darknet_ros/bounding_boxes", 1, &Objeto_search::objeto_detectado, this);
-      while(!object_det && contador < VALOR)
+      while(!object_det && (contador < VALOR)
       {
         contador++;
-        //  HACE TIEMPO XD
+        ROS_INFO("joder bro 1\n");
+        // GIRA Y BUSCA
+      }
+      while(object_det && !tf_pub)
+      {// HACE TIEMPO PARA PUBLICAR LA TRANSFORMADA
+        ROS_INFO("joder bro 2\n");
       }
       return;
     }
@@ -90,6 +99,7 @@ class Objeto_search
     int width = 640;
     int heigth = 480;
     geometry_msgs::Twist giro;
+    bool tf_pub;
     bool object_det;
 };
 
@@ -112,21 +122,21 @@ class Navigator
       goal.target_pose.pose.orientation.w = 1.0;
 
       switch(posicion)
-      {
+      {  
         case 0: goal.target_pose.pose.position.x = 3.0;
                 goal.target_pose.pose.position.y = 0.0;
                 break;
 
-        // case 1: goal.target_pose.pose.position.x = 4.0;
-        //         goal.target_pose.pose.position.y = 2.;
-        //         break;
+        case 1: goal.target_pose.pose.position.x = 4.0;
+                goal.target_pose.pose.position.y = 2.;
+                break;
 
-        // case 2: goal.target_pose.pose.position.x = 3.0;
-        //         goal.target_pose.pose.position.y = 0.0;
-        //         break; 
+        case 2: goal.target_pose.pose.position.x = 3.0;
+                goal.target_pose.pose.position.y = 0.0;
+                break; 
         default:
-                goal.target_pose.pose.position.x = -0.1541;
-                goal.target_pose.pose.position.y = -0.1541;
+                goal.target_pose.pose.position.x = -0.0;
+                goal.target_pose.pose.position.y = -0.0;
                 break;
                 
       }
@@ -166,7 +176,7 @@ class Navigator
 
   private:
     int posicion = 0;
-    int num_posiciones = 1;
+    int num_posiciones = 3;
     ros::NodeHandle nh_;
     ros::Subscriber wp_sub_;
     bool goal_sended_;
@@ -187,7 +197,7 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "navegacion");
   ros::NodeHandle nh("~");
   navigation::Navigator navigator(nh);
-  // Objeto_search buscador;
+  Objeto_search buscador;
 
   while (ros::ok())
   {
@@ -198,7 +208,7 @@ int main(int argc, char** argv)
     if(posicion_nav != navigator.get_pos() && posicion_nav != navigator.get_max_pos())
     {
       ROS_INFO("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-      // buscador.buscar_botella();
+      buscador.buscar_botella();
     }
     else if(posicion_nav == navigator.get_max_pos()+1)
     {
