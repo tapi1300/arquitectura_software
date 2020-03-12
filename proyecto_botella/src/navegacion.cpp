@@ -203,8 +203,8 @@ int main(int argc, char** argv)
   {
     posicion_nav = navigator.get_pos();
     ros::spinOnce();
-    navigator.step();
     navigator.ir_a_pos();
+    navigator.step();
     if(posicion_nav != navigator.get_pos() && posicion_nav != navigator.get_max_pos())
     {
       ROS_INFO("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
