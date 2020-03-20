@@ -12,7 +12,7 @@ int main(int argc, char **argv)
 
   BT::BehaviorTreeFactory factory;
 
-  factory.registerNodeType<behavior_arboles::Adelante>("avanzan2");
+  factory.registerNodeType<behavior_arboles::Adelante>("Adelante");
   // factory.registerNodeType<behavior_arboles::Girar>("Giracionando");
 
 

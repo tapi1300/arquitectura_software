@@ -33,7 +33,8 @@ Adelante::tick()
     }
     giro.linear.x = 0.1;
     giro.angular.z = 0.0;
-    num_pub.publish(giro);
+    num_pub.publish(giro); 
+    return BT::NodeStatus::RUNNING;
 }
 
 }  // namespace behavior_trees
