@@ -27,9 +27,14 @@ int main(int argc, char **argv)
   int count = 0;
 
   bool finish = false;
-  while (ros::ok() && !finish)
+  while (ros::ok())
   {
-    tree.root_node->executeTick();
+    finish = tree.root_node->executeTick() == BT::NodeStatus::SUCCESS;
+
+    if(finish)
+    {
+      tree = factory.createTreeFromFile(xml_file);
+    }
     ros::spinOnce();
     loop_rate.sleep();
   }
