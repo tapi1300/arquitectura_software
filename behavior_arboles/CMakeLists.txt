@@ -19,13 +19,15 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-#add_executable(
-#)
+
+add_executable(main_tree src/main_tree.cpp  
+  src/behavior_arboles/Adelante.cpp)
 
 
-#target_link_libraries(${catkin_LIBRARIES})
+target_link_libraries(main_tree ${catkin_LIBRARIES})
 
 
 roslint_cpp(
-
+  src/main_tree.cpp
+  include/behavior_arboles/Adelante.h src/behavior_arboles/Adelante.cpp
 )

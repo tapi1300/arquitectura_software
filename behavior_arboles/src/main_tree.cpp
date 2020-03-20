@@ -1,24 +1,22 @@
 #include "behavior_arboles/Adelante.h"
 // #include "behavior_arboles/Girar.h"
-
 #include "ros/ros.h"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-
 #include "ros/package.h"
 
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "behavior_tree");
+  ros::init(argc, argv, "behavior_arboles");
   ros::NodeHandle n;
 
   BT::BehaviorTreeFactory factory;
 
-  factory.registerNodeType<behavior_arboles::Adelante>("Avanzando");
-//   factory.registerNodeType<behavior_arboles::Girar>("CheckBattery");
+  factory.registerNodeType<behavior_arboles::Adelante>("avanzan2");
+  // factory.registerNodeType<behavior_arboles::Girar>("Giracionando");
 
 
-  std::string pkgpath = ros::package::getPath("behavior_trees");
+  std::string pkgpath = ros::package::getPath("behavior_arboles");
   std::string xml_file = pkgpath + "/behavior_arboles_xml/arbol_1.xml";
 
   BT::Tree tree = factory.createTreeFromFile(xml_file);
