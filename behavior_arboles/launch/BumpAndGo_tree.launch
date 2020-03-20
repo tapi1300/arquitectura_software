@@ -1,0 +1,3 @@
+<launch>
+	<node pkg="behavior_arboles" type="main_arbol" name="main_arbol" output="screen"/>
+</launch>

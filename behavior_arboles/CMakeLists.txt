@@ -20,15 +20,15 @@ include_directories(
 )
 
 
-add_executable(main_tree src/main_tree.cpp  
+add_executable(main_arbol src/main_arbol.cpp  
   src/behavior_arboles/Adelante.cpp src/behavior_arboles/Giro.cpp)
 
 
-target_link_libraries(main_tree ${catkin_LIBRARIES})
+target_link_libraries(main_arbol ${catkin_LIBRARIES})
 
 
 roslint_cpp(
-  src/main_tree.cpp
+  src/main_arbol.cpp
   include/behavior_arboles/Adelante.h src/behavior_arboles/Adelante.cpp
   include/behavior_arboles/Giro.h src/behavior_arboles/Giro.cpp
 )
