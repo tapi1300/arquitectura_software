@@ -7,6 +7,7 @@
 
 int main(int argc, char **argv)
 {
+  bool finish;
   ros::init(argc, argv, "behavior_arboles");
   ros::NodeHandle n;
 
@@ -24,9 +25,7 @@ int main(int argc, char **argv)
 
   ros::Rate loop_rate(5);
 
-  int count = 0;
-
-  bool finish = false;
+  finish = false;
   while (ros::ok())
   {
     finish = tree.root_node->executeTick() == BT::NodeStatus::SUCCESS;
