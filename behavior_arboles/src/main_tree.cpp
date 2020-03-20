@@ -1,5 +1,5 @@
 #include "behavior_arboles/Adelante.h"
-// #include "behavior_arboles/Girar.h"
+#include "behavior_arboles/Giro.h"
 #include "ros/ros.h"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
@@ -12,8 +12,9 @@ int main(int argc, char **argv)
 
   BT::BehaviorTreeFactory factory;
 
+
   factory.registerNodeType<behavior_arboles::Adelante>("Adelante");
-  // factory.registerNodeType<behavior_arboles::Girar>("Giracionando");
+  factory.registerNodeType<behavior_arboles::Giro>("Giro");
 
 
   std::string pkgpath = ros::package::getPath("behavior_arboles");
@@ -28,8 +29,7 @@ int main(int argc, char **argv)
   bool finish = false;
   while (ros::ok() && !finish)
   {
-    finish = tree.root_node->executeTick() == BT::NodeStatus::SUCCESS;
-
+    tree.root_node->executeTick();
     ros::spinOnce();
     loop_rate.sleep();
   }
