@@ -1,8 +1,15 @@
 #include "actionlib/client/simple_action_client.h"
-#include "move_base_msgs/MoveBaseAction.h"
-#include "geometry_msgs/PoseStamped.h"
 #include "darknet_ros_msgs/BoundingBoxes.h"
+#include "geometry_msgs/PoseStamped.h"
 #include "geometry_msgs/Twist.h"
+#include "geometry_msgs/TransformStamped.h"
+#include "move_base_msgs/MoveBaseAction.h"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
+#include "tf2/convert.h"
+#include "tf2_ros/transform_broadcaster.h"
+#include "tf2/LinearMath/Quaternion.h"
+#include "tf2/transform_datatypes.h"
+#include "tf2/LinearMath/Transform.h"
 #include <math.h>
 #include <ctime>
 #include <string>
@@ -14,9 +21,9 @@ class Objeto_search
   public:
     Objeto_search()
     {
-      object_det=false;
+      persona = "person";
+      object_det = false;
       num_pub = n.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
-      
     }
 
     void objeto_detectado(const darknet_ros_msgs::BoundingBoxes msg)
@@ -25,7 +32,7 @@ class Objeto_search
       posicion = -1;
       for(int i = 0; i < 24; i++)
       {
-        if(msg.bounding_boxes[i].Class == "person")
+        if(msg.bounding_boxes[i].Class == persona)
         {
           posicion = i;
           break;
@@ -42,15 +49,20 @@ class Objeto_search
         object_det = true;
         // PUBLICAR TRANSFORMADA
 
-        
+
 
 
       }
+      else
+      {
+        giro.linear.x = 0.0;
+        giro.angular.z = -0.30;
+      }
+      return;
     }
 
     void buscar_botella()
     {
-
      
       giro.linear.x = 0.0;
       giro.angular.z = -0.30;
@@ -78,12 +90,14 @@ class Objeto_search
           ROS_INFO("NO ENCONTRADO, SEGUIMOS");
         }
       }
+      sub.shutdown();
       return;
     }
 
     
 
   private:
+    std::string persona;
     time_t initial_time;
     time_t current_time;
     int posicion;
