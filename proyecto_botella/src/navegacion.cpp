@@ -21,9 +21,8 @@ class Objeto_search
   public:
     Objeto_search()
     {
-      // persona = "person";
-      object_det = false;
       num_pub = n.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
+      clase = "person";
     }
 
     void objeto_detectado(const darknet_ros_msgs::BoundingBoxes msg)
@@ -40,10 +39,7 @@ class Objeto_search
       }
       if(posicion != -1)
       {
-        for(int i = 0; i < 40; i++)
-        {
-          ROS_INFO("PERSONA ENCONTRADA");
-        }
+        ROS_INFO("OBJETO ENCONTRADO");
         giro.linear.x = 0.0;
         giro.angular.z = 0.0;
         object_det = true;
@@ -64,6 +60,7 @@ class Objeto_search
     void buscar_botella()
     {
      
+      object_det = false;
       giro.linear.x = 0.0;
       giro.angular.z = -0.30;
 
@@ -85,10 +82,7 @@ class Objeto_search
       }
       if(!object_det)
       {
-        for(int i = 0; i < 40; i++)
-        {
-          ROS_INFO("NO ENCONTRADO, SEGUIMOS");
-        }
+        ROS_INFO("NO ENCONTRADO, SEGUIMOS");
       }
       sub.shutdown();
       return;
@@ -105,7 +99,7 @@ class Objeto_search
     ros::Publisher num_pub;
     ros::Subscriber sub;
     geometry_msgs::Twist giro;
-    std::string clase = "person";
+    std::string clase;
 };
 
 
@@ -141,8 +135,8 @@ class Navigator
                 goal.target_pose.pose.position.y = 0.0;
                 break; 
         default:
-                goal.target_pose.pose.position.x = -0.0;
-                goal.target_pose.pose.position.y = -0.0;
+                goal.target_pose.pose.position.x = -0.15;
+                goal.target_pose.pose.position.y = -0.15;
                 break;
                 
       }
