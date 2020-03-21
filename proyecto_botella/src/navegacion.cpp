@@ -21,7 +21,7 @@ class Objeto_search
   public:
     Objeto_search()
     {
-      persona = "person";
+      // persona = "person";
       object_det = false;
       num_pub = n.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
     }
@@ -32,7 +32,7 @@ class Objeto_search
       posicion = -1;
       for(int i = 0; i < 24; i++)
       {
-        if(msg.bounding_boxes[i].Class == persona)
+        if(msg.bounding_boxes[i].Class == clase)
         {
           posicion = i;
           break;
@@ -97,7 +97,6 @@ class Objeto_search
     
 
   private:
-    std::string persona;
     time_t initial_time;
     time_t current_time;
     int posicion;
@@ -106,6 +105,7 @@ class Objeto_search
     ros::Publisher num_pub;
     ros::Subscriber sub;
     geometry_msgs::Twist giro;
+    std::string clase = "person";
 };
 
 
