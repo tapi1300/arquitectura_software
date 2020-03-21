@@ -11,11 +11,14 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   sensor_msgs
   std_msgs
-  tf
+  tf2
+  tf2_ros
+  tf2_geometry_msgs
 )
 
 catkin_package(
-CATKIN_DEPENDS roscpp std_msgs
+  CATKIN_DEPENDS roscpp std_msgs tf2_geometry_msgs tf2 tf2_ros
+   LIBRARIES geometry_tf
 )
 
 include_directories(
