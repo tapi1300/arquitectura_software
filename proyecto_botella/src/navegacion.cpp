@@ -25,7 +25,7 @@ class Objeto_search
       posicion = -1;
       for(int i = 0; i < 24; i++)
       {
-        if(msg.bounding_boxes[i].Class == "person")
+        if(msg.bounding_boxes[i].Class == clase)
         {
           posicion = i;
           break;
@@ -41,10 +41,6 @@ class Objeto_search
         giro.angular.z = 0.0;
         object_det = true;
         // PUBLICAR TRANSFORMADA
-
-        
-
-
       }
     }
 
@@ -92,6 +88,7 @@ class Objeto_search
     ros::Publisher num_pub;
     ros::Subscriber sub;
     geometry_msgs::Twist giro;
+    std::string clase = "person";
 };
 
 
