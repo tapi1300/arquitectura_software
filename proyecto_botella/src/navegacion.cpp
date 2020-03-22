@@ -4,6 +4,7 @@
 #include "geometry_msgs/Twist.h"
 #include "geometry_msgs/TransformStamped.h"
 #include "move_base_msgs/MoveBaseAction.h"
+#include "sensor_msgs/PointCloud2.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.h"
 #include "tf2/convert.h"
 #include "tf2_ros/transform_broadcaster.h"
@@ -25,10 +26,17 @@ class Objeto_search
       clase = "person";
     }
 
+    void publicar_tf(const sensor_msgs::PointCloud2 msg_pc)
+    {
+      msg_pc;
+      ROS_INFO("hola bro");
+    }
+
     void objeto_detectado(const darknet_ros_msgs::BoundingBoxes msg)
     {
       ros::Rate loop_rate(10);
       posicion = -1;
+      tf_pub=false;
       for(int i = 0; i < 24; i++)
       {
         if(msg.bounding_boxes[i].Class == clase)
@@ -43,11 +51,18 @@ class Objeto_search
         giro.linear.x = 0.0;
         giro.angular.z = 0.0;
         object_det = true;
+        
         // PUBLICAR TRANSFORMADA
+        x_tf = msg.bounding_boxes[posicion].xmin + ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2);
+        y_tf = msg.bounding_boxes[posicion].ymin + ((msg.bounding_boxes[posicion].ymax-msg.bounding_boxes[posicion].ymin)/2);
+        ROS_INFO("(%d, %d)",  x_tf, y_tf);
+        sub_tf = n.subscribe("/camera/depth/points", 1, &Objeto_search::publicar_tf, this);
 
-
-
-
+        while(!tf_pub)
+        {
+          // WAIT FOR TF TO BE PUBLISHED
+        }
+        sub_tf.shutdown();
       }
       else
       {
@@ -91,13 +106,13 @@ class Objeto_search
     
 
   private:
-    time_t initial_time;
-    time_t current_time;
-    int posicion;
+    time_t initial_time, current_time;
+    int posicion, x_tf, y_tf;
     bool object_det;
+    bool tf_pub;
     ros::NodeHandle n;
     ros::Publisher num_pub;
-    ros::Subscriber sub;
+    ros::Subscriber sub, sub_tf;
     geometry_msgs::Twist giro;
     std::string clase;
 };
