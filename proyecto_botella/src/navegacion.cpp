@@ -37,8 +37,6 @@ class Objeto_search
 
     void publicar_tf(const sensor_msgs::PointCloud2 msg_pc)
     {
-      ROS_INFO("hola bro");
-
       f2dto3d(msg_pc, center_x, center_y);
 
       x3 = point.z;
@@ -73,7 +71,6 @@ class Objeto_search
       memcpy(&cy, &msg_pc.data[postdata + msg_pc.fields[1].offset], sizeof(float));
       memcpy(&cz, &msg_pc.data[postdata + msg_pc.fields[2].offset], sizeof(float));
 
-      ROS_INFO("MOVIDAAAAS --> (%f, %f, %f)", cx, cy, cz);
 
       point.x = cx;
       point.y = cy;
@@ -197,8 +194,8 @@ class Navigator
         case 1: goal.target_pose.pose.position.x = 4.0;
                 goal.target_pose.pose.position.y = 2.0;
                 break;
-        case 2: goal.target_pose.pose.position.x = 4.5;
-                goal.target_pose.pose.position.y = 3.0;
+        case 2: goal.target_pose.pose.position.x = 1.8;
+                goal.target_pose.pose.position.y = 5.5;
                 break;
         default:
                 goal.target_pose.pose.position.x = -0.15;
