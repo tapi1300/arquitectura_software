@@ -4,6 +4,7 @@
 #include "geometry_msgs/Twist.h"
 #include "geometry_msgs/TransformStamped.h"
 #include "move_base_msgs/MoveBaseAction.h"
+#include "ros/ros.h"
 #include "sensor_msgs/PointCloud2.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.h"
 #include "tf2/convert.h"
