@@ -14,6 +14,10 @@
 #include <math.h>
 #include <ctime>
 #include <string>
+#include <pcl_ros/transforms.h>
+#include <pcl_conversions/pcl_conversions.h>
+#include <pcl/point_types.h>
+#include <pcl/point_types_conversion.h>
 
 
 
@@ -30,6 +34,25 @@ class Objeto_search
     {
       msg_pc;
       ROS_INFO("hola bro");
+
+      tf2::Stamped<tf2::Transform> object;
+      object.frame_id_ = "base_footprint";
+      object.stamp_ = ros::Time::now();
+
+      object.setOrigin(tf2::Vector3(x, y, z));
+
+      tf2::Quaternion q;
+      q.setRPY(0, 0, 0);
+      object.setRotation(q);
+
+      geometry_msgs::TransformStamped object_msg = tf2::toMsg(object);
+      object_msg.child_frame_id = "object";
+      tfBroadcaster_.sendTransform(object_msg);
+
+      ROS_INFO("(%f, %f, %f)", x, y, x);
+
+      sub_tf.shutdown();
+
     }
 
     void objeto_detectado(const darknet_ros_msgs::BoundingBoxes msg)
@@ -51,18 +74,15 @@ class Objeto_search
         giro.linear.x = 0.0;
         giro.angular.z = 0.0;
         object_det = true;
+
+        tf_pub = false;
         
         // PUBLICAR TRANSFORMADA
-        x_tf = msg.bounding_boxes[posicion].xmin + ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2);
-        y_tf = msg.bounding_boxes[posicion].ymin + ((msg.bounding_boxes[posicion].ymax-msg.bounding_boxes[posicion].ymin)/2);
+        center_x = msg.bounding_boxes[posicion].xmin + ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2);
+        center_y = msg.bounding_boxes[posicion].ymin + ((msg.bounding_boxes[posicion].ymax-msg.bounding_boxes[posicion].ymin)/2);
         ROS_INFO("(%d, %d)",  x_tf, y_tf);
         sub_tf = n.subscribe("/camera/depth/points", 1, &Objeto_search::publicar_tf, this);
 
-        while(!tf_pub)
-        {
-          // WAIT FOR TF TO BE PUBLISHED
-        }
-        sub_tf.shutdown();
       }
       else
       {
@@ -71,6 +91,7 @@ class Objeto_search
       }
       return;
     }
+
 
     void buscar_botella()
     {
@@ -115,8 +136,27 @@ class Objeto_search
     ros::Subscriber sub, sub_tf;
     geometry_msgs::Twist giro;
     std::string clase;
+    tf2::Stamped<tf2::Transform> object;
+    tf2::Quaternion q;
+    float x, y, z;
+    int center_x = 0;
+    tf2_ros::TransformBroadcaster tfBroadcaster_;
+    int center_y = 0;
 };
 
+
+  // tf2::Stamped<tf2::Transform> object;
+  // object.frame_id_ = "base_footprint";
+  // object.stamp_ = ros::Time::now();
+
+  // object.setOrigin(tf2::Vector3(x, y, z));
+
+  // tf2::Quaternion q;
+  // q.setRPY(0, 0, 0);
+  // object.setRotation(q);
+
+  // geometry_msgs::TransformStamped object_msg = tf2::toMsg(object);
+  // object_msg.child_frame_id = "object";
 
 
 namespace navigation
