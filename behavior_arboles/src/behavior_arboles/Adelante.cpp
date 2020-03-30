@@ -20,7 +20,7 @@ Adelante::choque(const kobuki_msgs::BumperEvent msg)
 void
 Adelante::halt()
 {
-  ROS_INFO("Adelante halt");
+  ROS_INFO("Adelante");
 }
 
 BT::NodeStatus
@@ -36,5 +36,4 @@ Adelante::tick()
     return BT::NodeStatus::RUNNING;
 }
 
-}  // namespace behavior_arboles
-
+}

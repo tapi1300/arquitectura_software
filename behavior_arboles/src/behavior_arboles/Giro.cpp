@@ -14,7 +14,7 @@ Giro::Giro(const std::string& name)
 void
 Giro::halt()
 {
-  ROS_INFO("Giro halt");
+  ROS_INFO("Girando");
 }
 
 BT::NodeStatus
@@ -42,5 +42,5 @@ Giro::tick()
     return BT::NodeStatus::SUCCESS;
 }
 
-}  // namespace behavior_arboles
+}  
 
