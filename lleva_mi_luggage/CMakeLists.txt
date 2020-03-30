@@ -4,6 +4,7 @@ project(lleva_mi_luggage)
 find_package(catkin REQUIRED COMPONENTS
   actionlib
   actionlib_msgs
+  darknet_ros
   darknet_ros_msgs
   dialogflow_ros_msgs
   geometry_msgs
