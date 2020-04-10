@@ -2,7 +2,7 @@
 #include "darknet_ros_msgs/BoundingBoxes.h"
 #include "sensor_msgs/LaserScan.h"
 #include "geometry_msgs/Twist.h"
-//#include <gb_dialog/DialogInterface.h>
+#include "dialogflow_ros_msgs/DialogflowResult.h"
 #include <string>
 #include "lleva_mi_luggage/Seguir.h"
 
@@ -12,7 +12,7 @@ namespace lleva_mi_luggage
 Seguir::Seguir(const std::string& name)
 : BT::ActionNodeBase(name, {}), parar(0)
 {
-  //ros::Subscriber sub2 = n.subscribe("/dialogflow_client/results", 1, &Seguir::noSeguir, this)
+  ros::Subscriber sub2 = n.subscribe("/dialogflow_client/results", 1, &Seguir::noSeguir, this);
   ros::Subscriber sub1 = n.subscribe("/darknet_ros/bounding_boxes", 1, &Seguir::persona_detectada, this);
   num_pub = n.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
   width=640;
@@ -20,13 +20,13 @@ Seguir::Seguir(const std::string& name)
 }
 
 
-// void Seguir::noSeguir(const dialogflow_ros_msgs/DialogflowResult resp)
-// {
-//   if (resp.intent == "Stop_carrying_luggage")
-//   {
-//     parar = 1;
-//   }
-// }
+void Seguir::noSeguir(const dialogflow_ros_msgs::DialogflowResult resp)
+{
+  if (resp.intent == "Stop_carrying_luggage")
+  {
+    parar = 1;
+  }
+}
 
 
 void Seguir::halt()
