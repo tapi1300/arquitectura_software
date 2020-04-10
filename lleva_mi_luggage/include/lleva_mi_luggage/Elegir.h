@@ -2,6 +2,7 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "darknet_ros_msgs/BoundingBoxes.h"
+#include <dialogflow_ros_msgs/DialogflowResult.h>
 #include "geometry_msgs/Twist.h"
 #include "ros/ros.h"
 
