@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   sound_play
   std_msgs
   std_srvs
+  behaviortree_cpp_v3
 )
 
 catkin_package(
@@ -25,16 +26,22 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
- add_executable(main_luggage src/main_luggage.cpp
-    src/lleva_mi_luggage/Seguir.cpp 
-    src/lleva_mi_luggage/Volver.cpp 
-    src/lleva_mi_luggage/Elegir.cpp)
+ add_executable(lleva_mi_luggage src/main_luggage.cpp
+    src/lleva_mi_luggage/Elegir.cpp 
+    src/lleva_mi_luggage/Volver.cpp
+    src/lleva_mi_luggage/Seguir.cpp
+    )
 
- target_link_libraries(main_luggage ${catkin_LIBRARIES})
+target_link_libraries(lleva_mi_luggage ${catkin_LIBRARIES})
 
 roslint_cpp(
    src/main_luggage.cpp
    include/lleva_mi_luggage/Elegir.h src/lleva_mi_luggage/Elegir.cpp
    include/lleva_mi_luggage/Seguir.h src/lleva_mi_luggage/Seguir.cpp
    include/lleva_mi_luggage/Volver.h src/lleva_mi_luggage/Volver.cpp
+)
+
+include_directories(
+  include
+  ${catkin_INCLUDE_DIRS}
 )

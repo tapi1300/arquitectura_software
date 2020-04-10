@@ -1,4 +1,6 @@
 
+
+
 namespace navigation
 {
 	class Navigator
