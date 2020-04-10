@@ -25,15 +25,16 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-# add_executable(lleva_mi_luggage src/lleva_mi_luggage.cpp
-#    src/lleva_mi_luggage/buscar_objeto.cpp src/lleva_mi_luggage/navegacion.cpp
-#   src/lleva_mi_luggage/dialog.cpp)
+ add_executable(main_luggage src/main_luggage.cpp
+    src/lleva_mi_luggage/Seguir.cpp 
+    src/lleva_mi_luggage/Volver.cpp 
+    src/lleva_mi_luggage/Elegir.cpp)
 
-# target_link_libraries(lleva_mi_luggage ${catkin_LIBRARIES})
+ target_link_libraries(main_luggage ${catkin_LIBRARIES})
 
 roslint_cpp(
-  # src/lleva_mi_luggage.cpp
-  # include/lleva_mi_luggage/dialog.h src/lleva_mi_luggage/dialog.cpp
-  # include/lleva_mi_luggage/buscar_objeto.h src/lleva_mi_luggage/buscar_objeto.cpp
-  # include/lleva_mi_luggage/navegacion.h src/lleva_mi_luggage/navegacion.cpp
+   src/main_luggage.cpp
+   include/lleva_mi_luggage/Elegir.h src/lleva_mi_luggage/Elegir.cpp
+   include/lleva_mi_luggage/Seguir.h src/lleva_mi_luggage/Seguir.cpp
+   include/lleva_mi_luggage/Volver.h src/lleva_mi_luggage/Volver.cpp
 )
