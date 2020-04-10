@@ -1,0 +1,9 @@
+<root main_tree_to_execute = "MainTree" >
+    <BehaviorTree ID="MainTree">
+        <Sequence name="moverse_sequence">
+            <Elegir name="eligien2"/>
+            <Seguir name="siguien2"/>
+            <Volver name="volvien2"/>
+        </Sequence>
+     </BehaviorTree>
+</root>
