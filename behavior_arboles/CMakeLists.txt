@@ -22,7 +22,8 @@ include_directories(
 
 add_executable(main_arbol src/main_arbol.cpp  
   src/behavior_arboles/Adelante.cpp 
-  src/behavior_arboles/Giro.cpp)
+  src/behavior_arboles/Giro.cpp
+  )
 
 
 target_link_libraries(main_arbol ${catkin_LIBRARIES})
