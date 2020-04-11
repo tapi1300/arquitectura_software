@@ -49,22 +49,22 @@ Seguir::seguirPersona(const darknet_ros_msgs::BoundingBoxes msg)
     return;
   }
   // AVANZAR
-  if(laser == 0 && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2-15 && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2+15)
+   if(laser == 0 && msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2-20 && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2+20)
   {
     giro.linear.x = 0.2;
     giro.angular.z = 0.0;
   }
   // GIRO IZQ
-  else if(laser== 0 && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2-30)
+  else if(laser == 0 && msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2-20)
   {
       giro.linear.x = 0.0;
-      giro.angular.z = 0.1;
+      giro.angular.z = 0.15;
   }
   // GIRO DER
-  else if(laser == 0 && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2+30)
+  else if(laser == 0 && msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2+20)
   {
       giro.linear.x = 0.0;
-      giro.angular.z = -0.1;
+      giro.angular.z = -0.15;
   }
 
   tiempo_darknet = time(NULL);

@@ -16,7 +16,7 @@ int main(int argc, char **argv)
   BT::BehaviorTreeFactory factory;
 
 
-  //factory.registerNodeType<lleva_mi_luggage::Elegir>("Elegir");
+  factory.registerNodeType<lleva_mi_luggage::Elegir>("Elegir");
   factory.registerNodeType<lleva_mi_luggage::Seguir>("Seguir");
   factory.registerNodeType<lleva_mi_luggage::Volver>("Volver");
 
