@@ -8,7 +8,6 @@ Elegir::Elegir(const std::string& name) : BT::ActionNodeBase(name, {}),
                                           elegido(false), 
                                           enfocado(false)
 {
-  halt();
   sub_info_camera = n.subscribe("/camera/depth/camera_info", 1, &Elegir::camera_info, this);
   sub_dialog = n.subscribe("/dialogflow_client/results", 1, &Elegir::objeto_elegido, this);
   sub_darknet = n.subscribe("/darknet_ros/bounding_boxes", 1, &Elegir::objeto_detectado, this);
@@ -29,7 +28,7 @@ Elegir::camera_info(const sensor_msgs::CameraInfo msg)
 void 
 Elegir::objeto_elegido(const dialogflow_ros_msgs::DialogflowResult msg)
 {
-  if(!elegido && msg.query_text != "")
+  if(!elegido && msg.query_text != "" && msg.intent == "Carry_my_luggage")
   {
     if(msg.parameters[0].param_name == "object_to_carry")
     {
@@ -54,7 +53,6 @@ Elegir::objeto_detectado(const darknet_ros_msgs::BoundingBoxes msg)
       if(msg.bounding_boxes[i].Class == objeto)
       {
         posicion = i;
-        ROS_INFO("%d", posicion);
         break;
       }
     }  
@@ -65,7 +63,6 @@ Elegir::objeto_detectado(const darknet_ros_msgs::BoundingBoxes msg)
 
     if(msg.bounding_boxes[posicion].Class == objeto && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2-20 && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2+20)
     {
-    ROS_INFO("DONE");
       giro.linear.x = 0.0;
       giro.angular.z = 0.0;
       enfocado = true;
@@ -73,14 +70,12 @@ Elegir::objeto_detectado(const darknet_ros_msgs::BoundingBoxes msg)
     // GIRO IZQ
     else if(msg.bounding_boxes[posicion].Class == objeto && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2-20)
     {
-    ROS_INFO("111111");
         giro.linear.x = 0.0;
         giro.angular.z = 0.15;
     }
     // GIRO DER
     else if(msg.bounding_boxes[posicion].Class == objeto && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2+20)
     {
-    ROS_INFO("2222");
         giro.linear.x = 0.0;
         giro.angular.z = -0.15;
     }

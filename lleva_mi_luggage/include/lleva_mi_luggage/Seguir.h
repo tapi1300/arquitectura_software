@@ -1,4 +1,5 @@
 #include "ros/ros.h"
+#include <ctime>
 #include "darknet_ros_msgs/BoundingBoxes.h"
 #include "sensor_msgs/LaserScan.h"
 #include "geometry_msgs/Twist.h"
@@ -30,6 +31,7 @@ class Seguir : public BT::ActionNodeBase
         ros::Subscriber sub_laser;
         ros::Publisher num_pub;
         geometry_msgs::Twist giro;
+        time_t tiempo_darknet, tiempo_real;
         int width;
         int heigth;
         int laser=0;

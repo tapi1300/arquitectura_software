@@ -10,7 +10,7 @@ namespace lleva_mi_luggage
 {
 
 Seguir::Seguir(const std::string& name)
-: BT::ActionNodeBase(name, {}), parar(0)
+: BT::ActionNodeBase(name, {}), parar(0), posicion(-1)
 {
   sub_darknet = n.subscribe("/darknet_ros/bounding_boxes", 1, &Seguir::seguirPersona, this);
   sub_dialog = n.subscribe("/dialogflow_client/results", 1, &Seguir::noSeguir, this);
@@ -23,7 +23,7 @@ Seguir::Seguir(const std::string& name)
 
 void Seguir::noSeguir(const dialogflow_ros_msgs::DialogflowResult resp)
 {
-  if (resp.intent == "Stop_carrying_luggage")
+  if (resp.intent == "Stop_carrying_luggage" && resp.query_text != "")
   {
     parar = 1;
   }
@@ -32,7 +32,7 @@ void Seguir::noSeguir(const dialogflow_ros_msgs::DialogflowResult resp)
 
 void Seguir::seguirPersona(const darknet_ros_msgs::BoundingBoxes msg)
 {
-  for(int i = 0; i < sizeof(msg.bounding_boxes)/sizeof(msg.bounding_boxes[0]); i++)
+  for(int i = 0; i < 24; i++)
   {
     if(msg.bounding_boxes[i].Class == "person")
     {
@@ -40,33 +40,30 @@ void Seguir::seguirPersona(const darknet_ros_msgs::BoundingBoxes msg)
       break;
     }
   }
+  if(posicion <0)
+  {
+    return;
+  }
   // AVANZAR
-  if(laser == 0 && msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2-15 && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2+15)
+  if(laser == 0 && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2-15 && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2+15)
   {
     giro.linear.x = 0.2;
     giro.angular.z = 0.0;
-      persona = msg.bounding_boxes[posicion].Class;
-
-
   }
   // GIRO IZQ
-  else if(laser== 0 && msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2-30)
+  else if(laser== 0 && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2-30)
   {
-        persona = msg.bounding_boxes[posicion].Class;
-
       giro.linear.x = 0.0;
       giro.angular.z = 0.1;
   }
   // GIRO DER
-  else if(laser == 0 && msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2+30)
+  else if(laser == 0 && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2+30)
   {
-        persona = msg.bounding_boxes[posicion].Class;
-
       giro.linear.x = 0.0;
       giro.angular.z = -0.1;
   }
 
-
+  tiempo_darknet = time(NULL);
 }
 
 
@@ -87,8 +84,6 @@ void Seguir::esquivarObjetos(const sensor_msgs::LaserScan msg)
 
     giro.linear.x = 0.0;
     giro.angular.z = 0.0;
-
-
   }
   else
   {
@@ -107,7 +102,11 @@ void Seguir::halt()
 BT::NodeStatus 
 Seguir::tick()
 {
-
+  if(time(NULL) - tiempo_darknet > 2)
+  {
+    giro.linear.x = 0.0;
+    giro.angular.z = 0.3;
+  }
   if (parar == 1)
   {
     giro.linear.x = 0.0;
