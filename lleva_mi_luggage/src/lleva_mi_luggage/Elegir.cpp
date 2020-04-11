@@ -102,9 +102,7 @@ Elegir::tick()
   {    
     sub_dialog.shutdown();
     sub_darknet.shutdown();
-    sub_info_camera.shutdown()
-    ;
-    ROS_INFO("AHORA TOCA SEGUIRTE");
+    sub_info_camera.shutdown();
     return BT::NodeStatus::SUCCESS;
   }
   num_pub.publish(giro); 
