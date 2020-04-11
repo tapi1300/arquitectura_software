@@ -1,9 +1,3 @@
-#include "ros/ros.h"
-#include "darknet_ros_msgs/BoundingBoxes.h"
-#include "sensor_msgs/LaserScan.h"
-#include "geometry_msgs/Twist.h"
-#include "dialogflow_ros_msgs/DialogflowResult.h"
-#include <string>
 #include "lleva_mi_luggage/Seguir.h"
 
 namespace lleva_mi_luggage

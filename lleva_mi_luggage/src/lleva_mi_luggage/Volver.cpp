@@ -14,7 +14,7 @@ goal_reached(false)
 void 
 Volver::halt()
 {
-  ROS_INFO("Volver");
+  ROS_INFO("Volviendo a casita");
 }
 
 
