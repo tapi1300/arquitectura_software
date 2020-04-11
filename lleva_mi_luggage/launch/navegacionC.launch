@@ -1,23 +1,23 @@
 <launch>
 
 <!-- Navigation Launch-->
- <arg name="custom_param_file" default="$(find proyecto_botella)/param/dummy.yaml"/>
+ <arg name="custom_param_file" default="$(find lleva_mi_luggage)/param/dummy.yaml"/>
   <!-- Map server -->
-  <arg name="map_file" default="$(find proyecto_botella)/maps/GrannieAnnie.yaml"/>
+  <arg name="map_file" default="$(find lleva_mi_luggage)/maps/GrannieAnnie.yaml"/>
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
 
-	<node pkg="proyecto_botella" type="navegacion" name="navegacion" output="screen"/>
-	<!-- node pkg="proyecto_botella" type="main" name="ubicacionador" output="screen"/-->
+	<node pkg="lleva_mi_luggage" type="navegacion" name="navegacion" output="screen"/>
+	<!-- node pkg="lleva_mi_luggage" type="main" name="ubicacionador" output="screen"/-->
   <arg name="initial_pose_x" default="0.0"/>
   <arg name="initial_pose_y" default="0.0"/>
   <arg name="initial_pose_a" default="0.0"/>
-  <include file="$(find proyecto_botella)/launch/includes/amcl.launch.xml">
+  <include file="$(find lleva_mi_luggage)/launch/includes/amcl.launch.xml">
     <arg name="initial_pose_x" value="$(arg initial_pose_x)"/>
     <arg name="initial_pose_y" value="$(arg initial_pose_y)"/>
     <arg name="initial_pose_a" value="$(arg initial_pose_a)"/>
   </include>
 
-  <include file="$(find proyecto_botella)/launch/includes/move_base.launch.xml">
+  <include file="$(find lleva_mi_luggage)/launch/includes/move_base.launch.xml">
     <arg name="custom_param_file" value="$(arg custom_param_file)"/>
   </include>
 
