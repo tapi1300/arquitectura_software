@@ -27,6 +27,7 @@ class Seguir : public BT::ActionNodeBase
         BT::NodeStatus tick();
 
     private:
+        time_t tiempo_darknet, current_time;
         ros::NodeHandle n;
         ros::Subscriber sub_darknet;
         ros::Subscriber sub_dialog;
