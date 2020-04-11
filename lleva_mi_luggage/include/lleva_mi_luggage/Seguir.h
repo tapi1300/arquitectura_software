@@ -35,7 +35,6 @@ class Seguir : public BT::ActionNodeBase
         ros::Subscriber sub_laser;
         ros::Publisher num_pub;
         geometry_msgs::Twist giro;
-        time_t tiempo_darknet, tiempo_real;
         int width;
         int height;
         int laser=0;
