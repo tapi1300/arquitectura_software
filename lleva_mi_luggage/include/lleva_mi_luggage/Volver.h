@@ -17,11 +17,14 @@ class Volver : public BT::ActionNodeBase
 
     void navegar();
 
+    void step();
+
     void halt();
 
     BT::NodeStatus tick();
 
   private:
+    bool goal_reached;
     ros::NodeHandle n;
     ros::Subscriber sub_darknet;
     ros::Subscriber sub_dialog;

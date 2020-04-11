@@ -4,7 +4,8 @@ namespace lleva_mi_luggage
 {
 
 Volver::Volver(const std::string& name) 
-: BT::ActionNodeBase(name, {}), goal_sended_(false), action_client_("/move_base", true)
+: BT::ActionNodeBase(name, {}), goal_sended_(false), action_client_("/move_base", true),
+goal_reached(false)
 {
   
 }
@@ -32,11 +33,41 @@ Volver::navegar()
 }
 
 
+void Volver::step()
+{
+  if (goal_sended_)
+  {
+    bool finished_before_timeout = action_client_.waitForResult(ros::Duration(0.5));
+    actionlib::SimpleClientGoalState state = action_client_.getState();
+    if (finished_before_timeout)
+    {
+      actionlib::SimpleClientGoalState state = action_client_.getState();
+      if (state == actionlib::SimpleClientGoalState::SUCCEEDED)
+      {
+        ROS_INFO("[navigate_to_wp] Goal Reached!");
+        goal_sended_ = false;
+        goal_reached = true;
+      }
+      else
+        ROS_INFO("[navigate_to_wp] Something bad happened!");
+        goal_sended_ = false;
+    }
+  }
+}
+
+
+
 BT::NodeStatus 
 Volver::tick()
 {
   navegar();
-  return BT::NodeStatus::SUCCESS;
+  step();
+  if (goal_reached)
+  {
+    return BT::NodeStatus::SUCCESS;
+  }
+  else
+    return BT::NodeStatus::RUNNING;
 }
 
 }
