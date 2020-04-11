@@ -3,8 +3,10 @@
 namespace lleva_mi_luggage
 {
 
-Volver::Volver(const std::string& name) : BT::ActionNodeBase(name, {})
+Volver::Volver(const std::string& name) 
+: BT::ActionNodeBase(name, {}), goal_sended_(false), action_client_("/move_base", true)
 {
+  
 }
 
 
@@ -15,9 +17,26 @@ Volver::halt()
 }
 
 
+void 
+Volver::navegar()
+{
+  goal.target_pose.pose.position.x = 3.0;
+  goal.target_pose.pose.position.y = 2.0;
+  goal.target_pose.pose.orientation.w = 1.0;
+
+  goal.target_pose.header.frame_id = "map";
+  goal.target_pose.header.stamp = ros::Time::now();
+  action_client_.sendGoal(goal);
+  goal_sended_ = true;
+
+}
+
+
 BT::NodeStatus 
 Volver::tick()
 {
-    return BT::NodeStatus::SUCCESS;
+  navegar();
+  return BT::NodeStatus::SUCCESS;
 }
+
 }

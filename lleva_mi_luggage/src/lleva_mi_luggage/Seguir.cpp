@@ -16,12 +16,13 @@ Seguir::Seguir(const std::string& name)
   sub_dialog = n.subscribe("/dialogflow_client/results", 1, &Seguir::noSeguir, this);
   sub_laser= n.subscribe("/scan", 1, &Seguir::esquivarObjetos, this);
   num_pub = n.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
-  width=640;
-  heigth=480;
+  width = 640;
+  height = 480;
 }
 
 
-void Seguir::noSeguir(const dialogflow_ros_msgs::DialogflowResult resp)
+void 
+Seguir::noSeguir(const dialogflow_ros_msgs::DialogflowResult resp)
 {
   if (resp.intent == "Stop_carrying_luggage" && resp.query_text != "")
   {
@@ -30,13 +31,22 @@ void Seguir::noSeguir(const dialogflow_ros_msgs::DialogflowResult resp)
 }
 
 
-void Seguir::seguirPersona(const darknet_ros_msgs::BoundingBoxes msg)
+
+void Seguir::halt()
+{
+  ROS_INFO("Siguiendo a la persona");
+}
+
+
+void 
+Seguir::seguirPersona(const darknet_ros_msgs::BoundingBoxes msg)
 {
   for(int i = 0; i < 24; i++)
   {
-    if(msg.bounding_boxes[i].Class == "person")
+    if(msg.bounding_boxes[i].Class == persona)
     {
       posicion = i;
+      es_persona = true;
       break;
     }
   }
@@ -67,9 +77,10 @@ void Seguir::seguirPersona(const darknet_ros_msgs::BoundingBoxes msg)
 }
 
 
-void Seguir::esquivarObjetos(const sensor_msgs::LaserScan msg)
+void 
+Seguir::esquivarObjetos(const sensor_msgs::LaserScan msg)
 {
-
+  parado = 0;
   std::vector<float> ranges = msg.ranges;
   for(int i=0; i<40; i++)
   {
@@ -92,12 +103,6 @@ void Seguir::esquivarObjetos(const sensor_msgs::LaserScan msg)
 }
 
 
-void Seguir::halt()
-{
-  ROS_INFO("Siguiendo a la persona");
-}
-
-
 
 BT::NodeStatus 
 Seguir::tick()
@@ -114,13 +119,7 @@ Seguir::tick()
     num_pub.publish(giro);
     return BT::NodeStatus::SUCCESS;
   }
-  if (persona != "person")
-  {
-    giro.linear.x = 0.0;
-    giro.angular.z = 0.3;
-    
 
-  }
   num_pub.publish(giro);
   return BT::NodeStatus::RUNNING;
 
