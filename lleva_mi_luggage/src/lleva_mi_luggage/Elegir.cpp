@@ -22,6 +22,7 @@ Elegir::camera_info(const sensor_msgs::CameraInfo msg)
   {
     width = msg.width;
     height = msg.height;
+    ancho_y_alto_taken = true;
   }
 }
 
