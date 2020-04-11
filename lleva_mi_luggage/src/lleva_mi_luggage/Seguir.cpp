@@ -10,18 +10,19 @@ namespace lleva_mi_luggage
 {
 
 Seguir::Seguir(const std::string& name)
-: BT::ActionNodeBase(name, {}), parar(0)
+: BT::ActionNodeBase(name, {}), parar(0), es_persona(false), persona("person")
 {
   sub_darknet = n.subscribe("/darknet_ros/bounding_boxes", 1, &Seguir::seguirPersona, this);
   sub_dialog = n.subscribe("/dialogflow_client/results", 1, &Seguir::noSeguir, this);
   sub_laser= n.subscribe("/scan", 1, &Seguir::esquivarObjetos, this);
   num_pub = n.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
-  width=640;
-  heigth=480;
+  width = 640;
+  height = 480;
 }
 
 
-void Seguir::noSeguir(const dialogflow_ros_msgs::DialogflowResult resp)
+void 
+Seguir::noSeguir(const dialogflow_ros_msgs::DialogflowResult resp)
 {
   if (resp.intent == "Stop_carrying_luggage")
   {
@@ -30,49 +31,52 @@ void Seguir::noSeguir(const dialogflow_ros_msgs::DialogflowResult resp)
 }
 
 
-void Seguir::seguirPersona(const darknet_ros_msgs::BoundingBoxes msg)
+
+void Seguir::halt()
 {
-  for(int i = 0; i < sizeof(msg.bounding_boxes)/sizeof(msg.bounding_boxes[0]); i++)
+  ROS_INFO("Siguiendo a la persona");
+}
+
+
+void 
+Seguir::seguirPersona(const darknet_ros_msgs::BoundingBoxes msg)
+{
+  for(int i = 0; i < 24; i++)
   {
-    if(msg.bounding_boxes[i].Class == "person")
+    if(msg.bounding_boxes[i].Class == persona)
     {
       posicion = i;
+      es_persona = true;
       break;
     }
   }
   // AVANZAR
-  if(laser == 0 && msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2-15 && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2+15)
+  if(laser == 0 && msg.bounding_boxes[posicion].Class == persona && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2-15 && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2+15)
   {
     giro.linear.x = 0.2;
     giro.angular.z = 0.0;
-      persona = msg.bounding_boxes[posicion].Class;
-
-
   }
   // GIRO IZQ
-  else if(laser== 0 && msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2-30)
+  else if(laser== 0 && msg.bounding_boxes[posicion].Class == persona && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2-30)
   {
-        persona = msg.bounding_boxes[posicion].Class;
-
-      giro.linear.x = 0.0;
-      giro.angular.z = 0.1;
+    giro.linear.x = 0.0;
+    giro.angular.z = 0.1;
   }
   // GIRO DER
-  else if(laser == 0 && msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2+30)
+  else if(laser == 0 && msg.bounding_boxes[posicion].Class == persona && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2+30)
   {
-        persona = msg.bounding_boxes[posicion].Class;
-
-      giro.linear.x = 0.0;
-      giro.angular.z = -0.1;
+    giro.linear.x = 0.0;
+    giro.angular.z = -0.1;
   }
 
 
 }
 
 
-void Seguir::esquivarObjetos(const sensor_msgs::LaserScan msg)
+void 
+Seguir::esquivarObjetos(const sensor_msgs::LaserScan msg)
 {
-
+  parado = 0;
   std::vector<float> ranges = msg.ranges;
   for(int i=0; i<40; i++)
   {
@@ -97,17 +101,15 @@ void Seguir::esquivarObjetos(const sensor_msgs::LaserScan msg)
 }
 
 
-void Seguir::halt()
-{
-  ROS_INFO("Siguiendo a la persona");
-}
-
-
 
 BT::NodeStatus 
 Seguir::tick()
 {
-
+  if (!es_persona)
+  {
+    giro.linear.x = 0.0;
+    giro.angular.z = 0.3;
+  }
   if (parar == 1)
   {
     giro.linear.x = 0.0;
@@ -115,13 +117,7 @@ Seguir::tick()
     num_pub.publish(giro);
     return BT::NodeStatus::SUCCESS;
   }
-  if (persona != "person")
-  {
-    giro.linear.x = 0.0;
-    giro.angular.z = 0.3;
-    
 
-  }
   num_pub.publish(giro);
   return BT::NodeStatus::RUNNING;
 
