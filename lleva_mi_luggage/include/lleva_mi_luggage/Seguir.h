@@ -6,6 +6,7 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "dialogflow_ros_msgs/DialogflowResult.h"
+#include <string>
 #include "sensor_msgs/CameraInfo.h"
 
 namespace lleva_mi_luggage
@@ -28,6 +29,7 @@ class Seguir : public BT::ActionNodeBase
         BT::NodeStatus tick();
 
     private:
+        time_t tiempo_darknet;
         ros::NodeHandle n;
         ros::Subscriber sub_darknet;
         ros::Subscriber sub_dialog;
