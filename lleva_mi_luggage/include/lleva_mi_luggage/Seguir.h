@@ -15,7 +15,9 @@ class Seguir : public BT::ActionNodeBase
 
         void noSeguir(const dialogflow_ros_msgs::DialogflowResult resp);
 
-        void persona_detectada(const darknet_ros_msgs::BoundingBoxes msg);
+        void seguirPersona(const darknet_ros_msgs::BoundingBoxes msg);
+
+        void esquivarObjetos(const sensor_msgs::LaserScan);
 
         void halt();
 
@@ -23,8 +25,9 @@ class Seguir : public BT::ActionNodeBase
 
     private:
         ros::NodeHandle n;
-        ros::Subscriber sub1;
-        ros::Subscriber sub2;
+        ros::Subscriber sub_darknet;
+        ros::Subscriber sub_dialog;
+        ros::Subscriber sub_laser;
         ros::Publisher num_pub;
         geometry_msgs::Twist giro;
         int width;
@@ -32,6 +35,9 @@ class Seguir : public BT::ActionNodeBase
         int laser=0;
         int posicion;
         int parar = 0;
+        int parado = 0;
+        std::string persona;
+        
 
 };
 }

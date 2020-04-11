@@ -1,0 +1,4 @@
+<launch>
+	<node pkg="lleva_mi_luggage" type="lleva_mi_luggage" name="lleva_mi_luggage" output="screen"/>
+</launch>
+

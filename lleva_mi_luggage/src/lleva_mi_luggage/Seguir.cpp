@@ -12,8 +12,9 @@ namespace lleva_mi_luggage
 Seguir::Seguir(const std::string& name)
 : BT::ActionNodeBase(name, {}), parar(0)
 {
-  ros::Subscriber sub2 = n.subscribe("/dialogflow_client/results", 1, &Seguir::noSeguir, this);
-  ros::Subscriber sub1 = n.subscribe("/darknet_ros/bounding_boxes", 1, &Seguir::persona_detectada, this);
+  sub_darknet = n.subscribe("/darknet_ros/bounding_boxes", 1, &Seguir::seguirPersona, this);
+  sub_dialog = n.subscribe("/dialogflow_client/results", 1, &Seguir::noSeguir, this);
+  sub_laser= n.subscribe("/scan", 1, &Seguir::esquivarObjetos, this);
   num_pub = n.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
   width=640;
   heigth=480;
@@ -29,16 +30,8 @@ void Seguir::noSeguir(const dialogflow_ros_msgs::DialogflowResult resp)
 }
 
 
-void Seguir::halt()
+void Seguir::seguirPersona(const darknet_ros_msgs::BoundingBoxes msg)
 {
-  ROS_INFO("Siguiendo a la persona");
-}
-
-
-
-void Seguir::persona_detectada(const darknet_ros_msgs::BoundingBoxes msg)
-{
-  int posicion = 0;
   for(int i = 0; i < sizeof(msg.bounding_boxes)/sizeof(msg.bounding_boxes[0]); i++)
   {
     if(msg.bounding_boxes[i].Class == "person")
@@ -47,43 +40,67 @@ void Seguir::persona_detectada(const darknet_ros_msgs::BoundingBoxes msg)
       break;
     }
   }
-
   // AVANZAR
-  if(msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2-20 && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2+20)
+  if(laser == 0 && msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2-15 && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2+15)
   {
     giro.linear.x = 0.2;
     giro.angular.z = 0.0;
+      persona = msg.bounding_boxes[posicion].Class;
+
 
   }
   // GIRO IZQ
-  else if(msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2-20)
+  else if(laser== 0 && msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2-30)
   {
+        persona = msg.bounding_boxes[posicion].Class;
+
       giro.linear.x = 0.0;
-      giro.angular.z = 0.15;
+      giro.angular.z = 0.1;
   }
   // GIRO DER
-  else if(msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2+20)
+  else if(laser == 0 && msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2+30)
   {
+        persona = msg.bounding_boxes[posicion].Class;
+
       giro.linear.x = 0.0;
-      giro.angular.z = -0.15;
+      giro.angular.z = -0.1;
   }
 
 
-
-  // // INTRODUCIR PROGRAMA DE DETECCION DE HUMANOS AQUI
-
-
-  // ros::Publisher
-  // ros::Rate loop_rate(10);
-
-  // loop_rate.sleep();
-
-
-  // num_pub.publish(giro);
-  // ros::spinOnce();
-  // loop_rate.sleep();
 }
 
+
+void Seguir::esquivarObjetos(const sensor_msgs::LaserScan msg)
+{
+
+  std::vector<float> ranges = msg.ranges;
+  for(int i=0; i<40; i++)
+  {
+    if(msg.ranges[ranges.size()/2-20+i]<0.5)
+    {
+      parado = 1;
+    }
+  }
+  if(parado == 1)
+  {
+    laser=1;
+
+    giro.linear.x = 0.0;
+    giro.angular.z = 0.0;
+
+
+  }
+  else
+  {
+    laser=0;
+  }
+}
+
+
+void Seguir::halt()
+{
+  ROS_INFO("Siguiendo a la persona");
+}
 
 
 
@@ -93,52 +110,21 @@ Seguir::tick()
 
   if (parar == 1)
   {
+    giro.linear.x = 0.0;
+    giro.angular.z = 0.0;
+    num_pub.publish(giro);
     return BT::NodeStatus::SUCCESS;
   }
+  if (persona != "person")
+  {
+    giro.linear.x = 0.0;
+    giro.angular.z = 0.3;
+    
 
+  }
+  num_pub.publish(giro);
   return BT::NodeStatus::RUNNING;
 
-
 }
 
 }
-
-
-
-
-
-
-
-
-
-
-// namespace ph = std::placeholders;
-
-// namespace gb_dialog
-// {
-// class ExampleDF: public DialogInterface
-// {
-//   public:
-//     ExampleDF(): nh_()
-//     {
-//       this->registerCallback(std::bind(&ExampleDF::noIntentCB, this, ph::_1));
-//       this->registerCallback(
-//         std::bind(&ExampleDF::welcomeIntentCB, this, ph::_1),
-//         "Default Welcome Intent");
-//     }
-
-//     void noIntentCB(dialogflow_ros_msgs::DialogflowResult result)
-//     {
-//       ROS_INFO("[ExampleDF] noIntentCB: intent [%s]", result.intent.c_str());
-//     }
-
-//     void welcomeIntentCB(dialogflow_ros_msgs::DialogflowResult result)
-//     {
-//       ROS_INFO("[ExampleDF] welcomeIntentCB: intent [%s]", result.intent.c_str());
-//       speak(result.fulfillment_text);
-//     }
-
-//   private:
-//     ros::NodeHandle nh_;
-// };
-// }  // namespace gb_dialog
