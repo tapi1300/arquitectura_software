@@ -58,13 +58,13 @@ Seguir::seguirPersona(const darknet_ros_msgs::BoundingBoxes msg)
   else if(laser == 0 && msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) < width/2-20)
   {
       giro.linear.x = 0.0;
-      giro.angular.z = 0.15;
+      giro.angular.z = 0.10;
   }
   // GIRO DER
   else if(laser == 0 && msg.bounding_boxes[posicion].Class == "person" && ((msg.bounding_boxes[posicion].xmax-msg.bounding_boxes[posicion].xmin)/2+msg.bounding_boxes[posicion].xmin) > width/2+20)
   {
       giro.linear.x = 0.0;
-      giro.angular.z = -0.15;
+      giro.angular.z = -0.10;
   }
 
   tiempo_darknet = time(NULL);
