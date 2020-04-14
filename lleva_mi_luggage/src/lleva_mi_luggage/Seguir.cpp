@@ -35,7 +35,7 @@ void Seguir::halt()
 void 
 Seguir::seguirPersona(const darknet_ros_msgs::BoundingBoxes msg)
 {
-  for(int i = 0; i < 24; i++)
+  for(int i = 0; i < msg.bounding_boxes.size(); i++)
   {
     if(msg.bounding_boxes[i].Class == persona)
     {

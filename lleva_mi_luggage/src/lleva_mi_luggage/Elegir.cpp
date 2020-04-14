@@ -48,7 +48,7 @@ Elegir::objeto_detectado(const darknet_ros_msgs::BoundingBoxes msg)
   if(elegido)
   {
     posicion = -1;
-    for(int i = 0; i < 24; i++)
+    for(int i = 0; i < msg.bounding_boxes.size(); i++)
     {
       if(msg.bounding_boxes[i].Class == objeto)
       {
