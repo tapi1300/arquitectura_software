@@ -3,22 +3,19 @@
 namespace lleva_mi_luggage
 {
 
-Volver::Volver(const std::string& name) 
+Volver::Volver(const std::string& name)
 : BT::ActionNodeBase(name, {}), goal_sended_(false), action_client_("/move_base", true),
-goal_reached(false)
-{
-  
-}
+goal_reached(false) {}
 
 
-void 
+void
 Volver::halt()
 {
   ROS_INFO("Volviendo a casita");
 }
 
 
-void 
+void
 Volver::navegar()
 {
   goal.target_pose.pose.position.x = 3.0;
@@ -57,7 +54,7 @@ void Volver::step()
 
 
 
-BT::NodeStatus 
+BT::NodeStatus
 Volver::tick()
 {
   navegar();
