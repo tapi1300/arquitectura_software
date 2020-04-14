@@ -7,13 +7,12 @@
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "dialogflow_ros_msgs/DialogflowResult.h"
 #include <string>
-#include "sensor_msgs/CameraInfo.h"
 
 namespace lleva_mi_luggage
 {
 class Seguir : public BT::ActionNodeBase
 {
-    public: 
+    public:
         explicit Seguir(const std::string& name);
 
         void noSeguir(const dialogflow_ros_msgs::DialogflowResult resp);
@@ -21,8 +20,6 @@ class Seguir : public BT::ActionNodeBase
         void seguirPersona(const darknet_ros_msgs::BoundingBoxes msg);
 
         void esquivarObjetos(const sensor_msgs::LaserScan);
-
-        void camera_info(const sensor_msgs::CameraInfo);
 
         void halt();
 
@@ -43,9 +40,8 @@ class Seguir : public BT::ActionNodeBase
         int parar = 0;
         int parado = 0;
         std::string persona = "person";
-        bool size;
         bool es_persona;
-        
+
 
 };
 }

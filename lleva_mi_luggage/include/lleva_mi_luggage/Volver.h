@@ -29,7 +29,6 @@ class Volver : public BT::ActionNodeBase
     ros::Subscriber sub_darknet;
     ros::Subscriber sub_dialog;
     ros::Subscriber sub_laser;
-    int posicion = 0;
     bool goal_sended_;
     ros::NodeHandle nh_;
     move_base_msgs::MoveBaseGoal goal;
