@@ -1,0 +1,58 @@
+<launch>
+<!-- Darknet Launch-->
+  <!-- Console launch prefix -->
+  <arg name="launch_prefix" default=""/>
+  <arg name="image" default="/camera/rgb/image_raw" />
+
+  <!-- Config and weights folder. -->
+  <arg name="yolo_weights_path"          default="$(find darknet_ros)/yolo_network_config/weights"/>
+  <arg name="yolo_config_path"           default="$(find darknet_ros)/yolo_network_config/cfg"/>
+
+  <!-- ROS and network parameter files -->
+  <arg name="ros_param_file"             default="$(find darknet_ros)/config/ros.yaml"/>
+  <arg name="network_param_file"         default="$(find darknet_ros)/config/yolov2-tiny.yaml"/>
+
+  <!-- Load parameters -->
+  <rosparam command="load" ns="darknet_ros" file="$(arg ros_param_file)"/>
+  <rosparam command="load" ns="darknet_ros" file="$(arg network_param_file)"/>
+
+  <!-- Start darknet and ros wrapper -->
+  <node pkg="darknet_ros" type="darknet_ros" name="darknet_ros" launch-prefix="$(arg launch_prefix)">
+    <param name="weights_path"          value="$(arg yolo_weights_path)" />
+    <param name="config_path"           value="$(arg yolo_config_path)" />
+    <remap from="camera/rgb/image_raw"  to="$(arg image)" />
+  </node>
+
+<!-- gb_dialog Launch-->
+  <arg name="config_file" default="$(find dialogflow_ros)/config/params.yaml"/>
+  <arg name="google_application_credentials" default="$(env HOME)/df_api.json"/>
+
+  <node name="soundplay_node" pkg="sound_play" type="soundplay_node.py" output="screen"/>
+  <node name="ros_soundclient" pkg="sound_play" type="ros_soundclient.py" output="screen"/>
+  <include file="$(find dialogflow_ros)/launch/dialogflow.launch" >
+    <arg name="google_application_credentials" value="$(arg google_application_credentials)"/>
+    <arg name="config_file" value="$(arg config_file)"/>
+  </include>
+
+
+<!-- Navigation Launch-->
+ <arg name="custom_param_file" default="$(find lleva_mi_luggage)/param/dummy.yaml"/>
+  <!-- Map server -->
+  <arg name="map_file" default="$(find lleva_mi_luggage)/maps/GrannieAnnie.yaml"/>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+
+  <arg name="initial_pose_x" default="3.0"/>
+  <arg name="initial_pose_y" default="2.0"/>
+  <arg name="initial_pose_a" default="0.0"/>
+  <include file="$(find lleva_mi_luggage)/launch/includes/amcl.launch.xml">
+    <arg name="initial_pose_x" value="$(arg initial_pose_x)"/>
+    <arg name="initial_pose_y" value="$(arg initial_pose_y)"/>
+    <arg name="initial_pose_a" value="$(arg initial_pose_a)"/>
+  </include>
+
+  <include file="$(find lleva_mi_luggage)/launch/includes/move_base.launch.xml">
+    <arg name="custom_param_file" value="$(arg custom_param_file)"/>
+  </include>
+
+	<node pkg="lleva_mi_luggage" type="lleva_mi_luggage" name="lleva_mi_luggage" output="screen"/>
+</launch>
