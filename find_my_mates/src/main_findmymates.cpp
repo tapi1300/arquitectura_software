@@ -1,6 +1,6 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include "find_my_mates/buscar_persona.h"
+#include "find_my_mates/Buscar.h"
 #include "ros/ros.h"
 #include "ros/package.h"
 
@@ -14,7 +14,7 @@ int main(int argc, char **argv)
   BT::BehaviorTreeFactory factory;
 
 
-  factory.registerNodeType<find_my_mates::buscar_persona>("buscar_persona");
+  factory.registerNodeType<find_my_mates::Buscar>("Buscar");
 
 
   std::string pkgpath = ros::package::getPath("find_my_mates");

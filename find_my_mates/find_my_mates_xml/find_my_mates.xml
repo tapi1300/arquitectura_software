@@ -2,7 +2,7 @@
     <BehaviorTree ID="MainTree">
         <Sequence name="moverse_sequence">
             <Repeat num_cicles="3">
-                <buscar_persona name="buscando"/>
+                <Buscar name="buscando"/>
                 <Giro name="giran2"/>
             </Repeat>
         </Sequence>

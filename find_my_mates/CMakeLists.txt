@@ -27,14 +27,14 @@ include_directories(
 )
 
  add_executable(find_my_mates src/main_findmymates.cpp
-    src/find_my_mates/buscar_persona.cpp
+    src/find_my_mates/Buscar.cpp
     )
 
 target_link_libraries(find_my_mates ${catkin_LIBRARIES})
 
 roslint_cpp(
    src/main_findmymates.cpp
-   include/find_my_mates/buscar_persona.h src/find_my_mates/buscar_persona.cpp
+   include/find_my_mates/Buscar.h src/find_my_mates/Buscar.cpp
 )
 
 include_directories(

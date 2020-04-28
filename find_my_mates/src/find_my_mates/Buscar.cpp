@@ -1,25 +1,28 @@
-#include "find_my_mates/buscar_persona.h"
+#include "find_my_mates/Buscar.h"
 
 namespace find_my_mates
 
 {
 
-buscar_persona::buscar_persona(const std::string& name) : BT::ActionNodeBase(name, {}),
+Buscar::Buscar(const std::string& name) : BT::ActionNodeBase(name, {}),
 														width(640),
 														height(480),
 														object_det(0),
 														posicion(-1)
 {
-	sub_darknet = n.subscribe("/darknet_ros/bounding_boxes", 1, &buscar_persona::buscar, this);
+	sub_darknet = n.subscribe("/darknet_ros/bounding_boxes", 1, &Buscar::buscar_persona, this);
 	num_pub = n.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
 }
 
 
-void buscar_persona::buscar(const darknet_ros_msgs::BoundingBoxes msg)
+void Buscar::buscar_persona(const darknet_ros_msgs::BoundingBoxes msg)
 {
   tiempo_darknet = time(NULL);
+
   giro.linear.x = 0.0;
   giro.angular.z = -0.30;
+
+  period = (2 * M_PI) / abs(giro.angular.z);
 
   for(int i = 0; i < msg.bounding_boxes.size(); i++)
   {
@@ -36,15 +39,13 @@ void buscar_persona::buscar(const darknet_ros_msgs::BoundingBoxes msg)
   }
 }
 
-void buscar_persona::halt()
+void Buscar::halt()
 {
 	ROS_INFO("Buscando persona en la sala");
 }
 
-BT::NodeStatus buscar_persona::tick()
+BT::NodeStatus Buscar::tick()
 {
-	period = (2 * M_PI) / abs(giro.angular.z);
-
 	if(time(NULL) - tiempo_darknet > period)
 	{
 		return BT::NodeStatus::FAILURE;

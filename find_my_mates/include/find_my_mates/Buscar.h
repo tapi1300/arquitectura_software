@@ -8,13 +8,13 @@
 
 namespace find_my_mates
 {
-    
-class buscar_persona : public BT::ActionNodeBase
+
+class Buscar : public BT::ActionNodeBase
 {
     public:
-        explicit buscar_persona(const std::string& name);
+        explicit Buscar(const std::string& name);
 
-		void buscar(const darknet_ros_msgs::BoundingBoxes msg);
+		void buscar_persona(const darknet_ros_msgs::BoundingBoxes msg);
 
         void halt();
 
