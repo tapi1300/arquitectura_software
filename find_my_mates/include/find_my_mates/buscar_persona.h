@@ -8,6 +8,7 @@
 
 namespace find_my_mates
 {
+    
 class buscar_persona : public BT::ActionNodeBase
 {
     public:

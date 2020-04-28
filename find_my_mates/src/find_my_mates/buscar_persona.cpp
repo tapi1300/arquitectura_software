@@ -10,12 +10,12 @@ buscar_persona::buscar_persona(const std::string& name) : BT::ActionNodeBase(nam
 														object_det(0),
 														posicion(-1)
 {
-	sub_darknet = n.subscribe("/darknet_ros/bounding_boxes", 1, &Objeto_search::buscar, this);
+	sub_darknet = n.subscribe("/darknet_ros/bounding_boxes", 1, &buscar_persona::buscar, this);
 	num_pub = n.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
 }
 
 
-void buscar(const darknet_ros_msgs::BoundingBoxes msg)
+void buscar_persona::buscar(const darknet_ros_msgs::BoundingBoxes msg)
 {
   tiempo_darknet = time(NULL);
   giro.linear.x = 0.0;
@@ -36,12 +36,12 @@ void buscar(const darknet_ros_msgs::BoundingBoxes msg)
   }
 }
 
-void halt()
+void buscar_persona::halt()
 {
 	ROS_INFO("Buscando persona en la sala");
 }
 
-BT::NodeStatus tick()
+BT::NodeStatus buscar_persona::tick()
 {
 	period = (2 * M_PI) / abs(giro.angular.z);
 
