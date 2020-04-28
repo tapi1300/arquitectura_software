@@ -1,0 +1,10 @@
+<root main_tree_to_execute = "MainTree" >
+    <BehaviorTree ID="MainTree">
+        <Sequence name="moverse_sequence">
+            <Repeat num_cicles="3">
+                <Adelante   name="avanzan2"/>
+                <Giro name="giran2"/>
+            </Repeat>
+        </Sequence>
+     </BehaviorTree>
+</root>
