@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 
 
   factory.registerNodeType<behavior_arboles::Adelante>("Adelante");
-  factory.registerNodeType<behavior_arboles::Giro>("Giro");
+  // factory.registerNodeType<behavior_arboles::Giro>("Giro");
 
 
   std::string pkgpath = ros::package::getPath("behavior_arboles");
@@ -26,14 +26,10 @@ int main(int argc, char **argv)
   ros::Rate loop_rate(5);
 
   finish = false;
-  while (ros::ok())
+  while (ros::ok() && !finish)
   {
     finish = tree.root_node->executeTick() == BT::NodeStatus::SUCCESS;
 
-    if(finish)
-    {
-      tree = factory.createTreeFromFile(xml_file);
-    }
     ros::spinOnce();
     loop_rate.sleep();
   }

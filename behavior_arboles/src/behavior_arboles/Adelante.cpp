@@ -26,14 +26,8 @@ Adelante::halt()
 BT::NodeStatus
 Adelante::tick()
 {
-    if(ha_chocado==1)
-    {
-        return BT::NodeStatus::SUCCESS;
-    }
-    giro.linear.x = 0.1;
-    giro.angular.z = 0.0;
-    num_pub.publish(giro); 
-    return BT::NodeStatus::RUNNING;
+    ROS_INFO("hooooooooola");
+    return BT::NodeStatus::SUCCESS;
 }
 
 }
