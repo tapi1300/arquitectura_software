@@ -10,6 +10,7 @@
 #include "ros/ros.h"
 #include "sensor_msgs/CameraInfo.h"
 #include <string.h>
+#include <string>
 #include "tf2_geometry_msgs/tf2_geometry_msgs.h"
 #include "tf2/convert.h"
 #include "tf2_ros/transform_broadcaster.h"
@@ -21,7 +22,6 @@
 namespace find_my_mates
 {
 
-class DialogInterface;
 
 class Hablar : public BT::ActionNodeBase
 {

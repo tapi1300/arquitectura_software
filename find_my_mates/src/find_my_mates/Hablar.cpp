@@ -6,24 +6,15 @@
 namespace find_my_mates
 {
 
-
-
-
-
-
-
-
-
-    
 Hablar::Hablar(const std::string& name) : BT::ActionNodeBase(name, {}),
                                           ancho_y_alto_taken(false),
                                           elegido(false), 
                                           enfocado(false)
 {
-  sub_info_camera = n.subscribe("/camera/depth/camera_info", 1, &Hablar::camera_info, this);
   sub_dialog = n.subscribe("/dialogflow_client/results", 1, &Hablar::objeto_elegido, this);
-  pub_nombre = n.advertise<std::string>("/find_my_mates/nombre_obtenido", 1, true);
-  pub_objeto = n.advertise<std::string>("/find_my_mates/objeto_obtenido", 1, true);
+  sub_info_camera = n.subscribe("/camera/depth/camera_info", 1, &Hablar::camera_info, this);
+//   pub_nombre = n.advertise<std::string>("/find_my_mates/nombre_obtenido", 1);
+  pub_objeto = n.advertise<std::string>("/find_my_mates/objeto_obtenido", 1);
 }
 
 void 
@@ -52,6 +43,25 @@ Hablar::camera_info(const sensor_msgs::CameraInfo msg)
     height = msg.height;
     ancho_y_alto_taken = true;
   }
+}
+
+
+void 
+Hablar::objeto_detectado(const darknet_ros_msgs::BoundingBoxes msg)
+{
+    return;
+}
+
+void 
+Hablar::halt()
+{
+  ROS_INFO("Hablar");
+}
+
+BT::NodeStatus 
+Hablar::tick()
+{
+  return BT::NodeStatus::SUCCESS;
 }
 
 }
