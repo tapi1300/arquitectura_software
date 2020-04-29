@@ -12,7 +12,7 @@
 #include <regex>
 #include <map>
 
-namespace gb_dialog
+namespace find_my_mates
 {
 class DialogInterface
 {

@@ -3,7 +3,7 @@
 #include <string>
 #include <utility>
 
-namespace gb_dialog
+namespace find_my_mates
 {
 
 DialogInterface::DialogInterface() : nh_()

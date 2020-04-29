@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 
   factory.registerNodeType<find_my_mates::Navegar>("Navegar");
   factory.registerNodeType<find_my_mates::Volver>("Volver");
-  //factory.registerNodeType<find_my_mates::Buscar>("Buscar");
+  factory.registerNodeType<find_my_mates::Buscar>("Buscar");
 
 
   std::string pkgpath = ros::package::getPath("find_my_mates");
