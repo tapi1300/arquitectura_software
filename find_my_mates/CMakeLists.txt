@@ -28,6 +28,8 @@ include_directories(
 
  add_executable(find_my_mates src/main_findmymates.cpp
     src/find_my_mates/Buscar.cpp
+    src/find_my_mates/Navegar.cpp
+    src/find_my_mates/Volver.cpp
     )
 
 target_link_libraries(find_my_mates ${catkin_LIBRARIES})
@@ -35,6 +37,8 @@ target_link_libraries(find_my_mates ${catkin_LIBRARIES})
 roslint_cpp(
    src/main_findmymates.cpp
    include/find_my_mates/Buscar.h src/find_my_mates/Buscar.cpp
+   include/find_my_mates/Navegar.h src/find_my_mates/Navegar.cpp
+   include/find_my_mates/Volver.h src/find_my_mates/Volver.cpp
 )
 
 include_directories(
