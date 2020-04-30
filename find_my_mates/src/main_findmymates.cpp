@@ -3,6 +3,8 @@
 #include "find_my_mates/Buscar.h"
 #include "find_my_mates/Navegar.h"
 #include "find_my_mates/Volver.h"
+#include "find_my_mates/Hablar.h"
+#include "find_my_mates/Chivar.h"
 #include "ros/ros.h"
 #include "ros/package.h"
 
@@ -16,8 +18,10 @@ int main(int argc, char **argv)
   BT::BehaviorTreeFactory factory;
 
   factory.registerNodeType<find_my_mates::Navegar>("Navegar");
-  factory.registerNodeType<find_my_mates::Volver>("Volver");
   factory.registerNodeType<find_my_mates::Buscar>("Buscar");
+  factory.registerNodeType<find_my_mates::Hablar>("Hablar");
+  factory.registerNodeType<find_my_mates::Volver>("Volver");
+  factory.registerNodeType<find_my_mates::Chivar>("Chivar");
 
 
   std::string pkgpath = ros::package::getPath("find_my_mates");

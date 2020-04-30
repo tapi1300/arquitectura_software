@@ -1,12 +1,13 @@
 <root main_tree_to_execute = "MainTree" >
     <BehaviorTree ID="MainTree">
-        <Sequence name="moverse_sequence">
-            <!-- <Repeat num_cicles="3"> -->
+        <Repeat num_cycles="3">
+            <Sequence name="moverse_sequence">
                 <Navegar name="navegando"/>
+                <Buscar name="buscando"/>
+                <Hablar name="hablando"/>
                 <Volver name="volviendo"/>
-                <!-- <Buscar name="buscando"/> -->
-                <!-- <Giro name="giran2"/> -->
-            <!-- </Repeat> -->
-        </Sequence>
+                <Chivar name="chivando"/>
+            </Sequence>
+        </Repeat>
      </BehaviorTree>
 </root>

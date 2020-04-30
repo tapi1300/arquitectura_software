@@ -59,8 +59,8 @@ class Hablar :  public BT::ActionNodeBase, public DialogInterface
     int width;
     int height;
     int posicion;
-    std_msgs::Int32 center_x;
-    std_msgs::Int32 center_y;
+    float center_x;
+    float center_y;
     std_msgs::Int32 pos_x;
     std_msgs::Int32 pos_y;
     float cx, cy, cz;
@@ -71,6 +71,7 @@ class Hablar :  public BT::ActionNodeBase, public DialogInterface
     ros::Publisher pub_x;
     ros::Publisher pub_y;
     ros::Subscriber sub_dialog;
+    ros::Subscriber sub_darknet;
     ros::Subscriber sub_info_camera;
     ros::Subscriber sub_tf;
     std_msgs::String objeto;

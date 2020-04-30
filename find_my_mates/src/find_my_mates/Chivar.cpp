@@ -6,7 +6,8 @@
 namespace find_my_mates
 {
 
-Chivar::Chivar(const std::string& name) : BT::ActionNodeBase(name, {})
+Chivar::Chivar(const std::string& name) : BT::ActionNodeBase(name, {}),
+                                          primerita_vez(true)
 {
   sub_name = n.subscribe("/find_my_mates/nombre_obtenido", 1, &Chivar::name, this);
   sub_obj = n.subscribe("/find_my_mates/objeto_obtenido", 1, &Chivar::object, this);
@@ -57,6 +58,7 @@ Chivar::hablar()
                 + " and is in (" + std::to_string(x.data) + "," 
                 +  std::to_string(y.data) + ")";
   speak(speak_final);
+  primerita_vez = false;
 }
 
 
@@ -64,7 +66,10 @@ Chivar::hablar()
 BT::NodeStatus 
 Chivar::tick()
 {
-  hablar();
+  if(primerita_vez)
+  {
+    hablar();
+  }
   return BT::NodeStatus::SUCCESS;
 }
 

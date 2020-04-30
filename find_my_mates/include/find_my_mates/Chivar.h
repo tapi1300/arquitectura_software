@@ -30,6 +30,7 @@ class Chivar : public BT::ActionNodeBase, public DialogInterface
     BT::NodeStatus tick();
 
   private:
+    bool primerita_vez;
     ros::NodeHandle n;
     ros::Subscriber sub_name;
     ros::Subscriber sub_obj;
