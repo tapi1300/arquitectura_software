@@ -9,3 +9,6 @@ https://youtu.be/KGCbrRE2fU8
 
 VIDEO DE EJEMPLO DEL PAQUETE "LLEVA_MI_LUGGAGE"
 https://www.youtube.com/watch?v=k9e5T6SanKA
+
+VIDEO DE EJEMPLO DEL PAQUETE "FIND_MY_MATES"
+https://www.youtube.com/watch?v=xZPt1SZZ2pM
